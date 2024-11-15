@@ -119,7 +119,7 @@ $(".faq--question").on("click", function () {
   $(this).toggleClass("open");
 });
 
-// --------------------- navbar toggle --------------------- //
+// --------------------- navbar dropdowns --------------------- //
 
 // GSAP Dropdown Logic
 document.addEventListener("DOMContentLoaded", () => {
@@ -193,6 +193,72 @@ document.addEventListener("DOMContentLoaded", () => {
   document.addEventListener("click", (e) => {
     if (!e.target.closest(".navbar--dropdown")) {
       closeAllDropdowns();
+    }
+  });
+});
+
+// --------------------- navbar mobile toggle --------------------- //
+
+document.addEventListener("DOMContentLoaded", () => {
+  const menuTrigger = document.querySelector(".navbar--menu-trigger");
+  const navbarMenu = document.querySelector(".navbar--menu");
+  const dropdowns = document.querySelectorAll(".navbar--dropdown");
+  const buttonsWrapper = document.querySelector(".navbar--buttons-wrapper");
+
+  // Function to open the menu
+  function openMenu() {
+    navbarMenu.style.display = "flex"; // Ensure visibility before animation
+    gsap.fromTo(
+      navbarMenu,
+      { height: 0, opacity: 0 },
+      { height: "auto", opacity: 1, duration: 0.5, ease: "power2.out" }
+    );
+    gsap.fromTo(
+      [...dropdowns, buttonsWrapper],
+      { y: "20rem", opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.5, stagger: 0.1, ease: "power2.out" }
+    );
+    navbarMenu.classList.add("open");
+  }
+
+  // Function to close the menu
+  function closeMenu() {
+    gsap.to([...dropdowns, buttonsWrapper], {
+      y: "20rem",
+      opacity: 0,
+      duration: 0.3,
+      stagger: 0.1,
+      ease: "power2.out",
+    });
+    gsap.to(navbarMenu, {
+      height: 0,
+      opacity: 0,
+      duration: 0.5,
+      ease: "power2.out",
+      onComplete: () => {
+        navbarMenu.style.display = "none"; // Hide completely after animation
+        navbarMenu.classList.remove("open");
+      },
+    });
+  }
+
+  // Toggle menu on trigger click
+  menuTrigger.addEventListener("click", (e) => {
+    e.stopPropagation();
+    if (navbarMenu.classList.contains("open")) {
+      closeMenu();
+    } else {
+      openMenu();
+    }
+  });
+
+  // Close menu when clicking outside
+  document.addEventListener("click", (e) => {
+    if (
+      !e.target.closest(".navbar--menu") &&
+      navbarMenu.classList.contains("open")
+    ) {
+      closeMenu();
     }
   });
 });
