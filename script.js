@@ -119,7 +119,82 @@ $(".faq--question").on("click", function () {
   $(this).toggleClass("open");
 });
 
-// --------------------- navbar --------------------- //
+// --------------------- navbar toggle --------------------- //
+
+// GSAP Dropdown Logic
+document.addEventListener("DOMContentLoaded", () => {
+  const dropdownToggles = document.querySelectorAll(".navbar--dropdown-toggle");
+
+  // Close all dropdowns
+  function closeAllDropdowns() {
+    const dropdownLists = document.querySelectorAll(".navbar--dropdown-list");
+    dropdownLists.forEach((list) => {
+      gsap.to(list, {
+        height: 0,
+        opacity: 0,
+        duration: 0.5,
+        display: "none",
+        ease: "smooth",
+        onComplete: () => {
+          list.style.display = "none";
+        },
+      });
+      const parentElements = list.querySelectorAll(
+        ".navbar--dropdown-title-parent, .navbar--dropdown-column"
+      );
+      gsap.to(parentElements, {
+        y: "20rem",
+        opacity: 0,
+        duration: 0.3,
+        stagger: 0.1,
+        ease: "smooth",
+      });
+    });
+  }
+
+  // Toggle specific dropdown
+  dropdownToggles.forEach((toggle) => {
+    toggle.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const dropdownList = toggle.nextElementSibling;
+
+      // Close other dropdowns first
+      closeAllDropdowns();
+
+      // Toggle the clicked dropdown
+      if (
+        dropdownList.style.display === "none" ||
+        !dropdownList.style.display
+      ) {
+        dropdownList.style.display = "flex";
+        gsap.fromTo(
+          dropdownList,
+          { height: 0, opacity: 0 },
+          { height: "auto", opacity: 1, duration: 0.5, ease: "smooth" }
+        );
+
+        const parentElements = dropdownList.querySelectorAll(
+          ".navbar--dropdown-title-parent, .navbar--dropdown-column"
+        );
+        gsap.fromTo(
+          parentElements,
+          { y: "20rem", opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.5, stagger: 0.1, ease: "smooth" }
+        );
+      } else {
+        closeAllDropdowns();
+      }
+    });
+  });
+
+  // Close dropdown when clicking outside
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest(".navbar--dropdown")) {
+      closeAllDropdowns();
+    }
+  });
+});
+// --------------------- navbar scroll background --------------------- //
 
 $(document).ready(function () {
   var scrollTop = 0;
