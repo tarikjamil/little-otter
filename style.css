@@ -11,6 +11,7 @@
   background: transparent;
   border-radius: 55.859px;
   border: 1rem solid var(--deep-marin--300);
+  transition: all 0.3s ease;
 }
 
 .swiper-pagination-bullet .swiper-pagination-bullet-active {
