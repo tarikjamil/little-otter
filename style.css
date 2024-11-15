@@ -1,0 +1,50 @@
+.main-wrapper {
+  opacity: 0;
+}
+
+.nav--row .navbar--link,
+.nav--row .icon--26 {
+  opacity: 0;
+}
+
+.nav--row:hover .navbar--link,
+.nav--row:hover .icon--26 {
+  opacity: 1;
+}
+
+.nav--row:hover .number {
+  background-color: var(--color--dark);
+  color: var(--color--smoke);
+}
+
+.nav--row:hover .btn {
+  background-color: var(--color--dark);
+}
+
+.nav--row {
+  border-bottom-color: transparent;
+}
+
+.menu--side.is--open .nav--row {
+  border-bottom-color: rgba(112, 112, 112, 0.14);
+}
+
+.background--nav-row {
+  opacity: 0;
+}
+
+.menu--side.is--open .nav--row:hover .background--nav-row {
+  opacity: 1;
+}
+
+.swiper-slide_inside:hover .swiper--slide-bg {
+  opacity: 1;
+}
+
+.portfolio--image-wrapper .mask--hover {
+  opacity: 0;
+}
+
+.portfolio--image-wrapper:hover .mask--hover {
+  opacity: 1;
+}
