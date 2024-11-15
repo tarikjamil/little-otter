@@ -45,13 +45,13 @@ document.querySelectorAll("[animation=fade]").forEach(function (fadeSplitElem) {
   gsap.from(fadeSplitElem, {
     scrollTrigger: {
       trigger: fadeSplitElem,
-      start: "top bottom-=100",
+      start: "top bottom-=200",
       markers: false,
     },
     y: "40rem",
     opacity: 0,
     ease: "smooth",
-    duration: 0.4,
+    duration: 0.6,
   });
 });
 
