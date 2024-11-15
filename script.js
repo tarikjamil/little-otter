@@ -106,7 +106,7 @@ imageWrappers.forEach((imageWrapper) => {
 
 const carousel = document.querySelectorAll(".is--testimonials-slider");
 
-carousel4.forEach((swiperEl) => {
+carousel.forEach((swiperEl) => {
   const swiperInstance = new Swiper(swiperEl, {
     slidesPerView: 1,
     spaceBetween: "12rem", // Set space between slides in pixels
