@@ -298,45 +298,23 @@ window.addEventListener("scroll", () => {
 
 // --------------------- navbar line with gsap flip --------------------- //
 
-document.addEventListener("DOMContentLoaded", () => {
-  const dropdownToggles = document.querySelectorAll(".navbar--dropdown-toggle");
-  const dropdownLine = document.querySelector(".navbar--dropdown-line"); // The line element
-
-  // Set up the initial state
-  let activeToggle = null;
-
-  function positionLine(toggle) {
-    const toggleRect = toggle.getBoundingClientRect(); // Get the dimensions of the toggle
-    const menuRect = toggle.parentNode.getBoundingClientRect(); // Get the parent container's dimensions
-
-    const offsetX = toggleRect.left - menuRect.left; // Calculate the offset relative to the parent
-    const width = toggleRect.width; // Set the width to match the toggle
-
-    // Animate the line to match the toggle's position and width
-    gsap.to(dropdownLine, {
-      x: offsetX,
-      width: width,
-      duration: 0.5,
+$(document).ready(function () {
+  $(".navbar--dropdown-toggle").on("mouseenter", function () {
+    $(".navbar--dropdown-line").css("opacity", "1"); // Ensure the line is visible
+    const state = Flip.getState(".navbar--dropdown-line"); // Capture the current position/state
+    $(this).append($(".navbar--dropdown-line")); // Move the line to the hovered toggle
+    Flip.from(state, {
+      duration: 0.4,
       ease: "power2.out",
     });
-  }
+  });
 
-  dropdownToggles.forEach((toggle) => {
-    toggle.addEventListener("mouseenter", () => {
-      positionLine(toggle); // Move the line to the hovered toggle
-    });
-
-    toggle.addEventListener("mouseleave", () => {
-      if (activeToggle) {
-        positionLine(activeToggle); // Return to the active toggle if set
-      } else {
-        gsap.to(dropdownLine, { width: 0, duration: 0.5, ease: "power2.out" }); // Hide the line
-      }
-    });
-
-    toggle.addEventListener("click", () => {
-      activeToggle = toggle; // Set the clicked toggle as active
-      positionLine(toggle);
+  $(".navbar--menu").on("mouseleave", function () {
+    $(".navbar--dropdown-line").css("opacity", "0"); // Hide the line
+    const state = Flip.getState(".navbar--dropdown-line"); // Capture the current position/state
+    Flip.from(state, {
+      duration: 0.4,
+      ease: "power2.out",
     });
   });
 });
