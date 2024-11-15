@@ -1,6 +1,6 @@
 // --------------------- gsap --------------------- //
 
-gsap.registerPlugin(ScrollTrigger, CustomEase);
+gsap.registerPlugin(ScrollTrigger, CustomEase, Flip);
 
 // --------------------- smooth ease --------------------- //
 
