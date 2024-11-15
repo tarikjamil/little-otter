@@ -19,7 +19,7 @@ function pageLoad() {
     {
       opacity: 1,
       ease: "smooth",
-      duration: 1,
+      duration: 0.6,
     },
     "loadingAnimationsStart"
   );
@@ -29,9 +29,9 @@ function pageLoad() {
     {
       y: "40rem",
       opacity: "0",
-      stagger: { each: 0.2, from: "start" },
+      stagger: { each: 0.1, from: "start" },
       ease: "smooth",
-      duration: 1,
+      duration: 0.6,
     },
     "loadingAnimationsStart"
   ); // <-- position parameter set to the label
