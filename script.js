@@ -111,6 +111,7 @@ carousel.forEach((swiperEl) => {
     slidesPerView: 1,
     spaceBetween: "12rem", // Set space between slides in pixels
     loop: false,
+    draggable: true,
     pagination: {
       el: swiperEl.querySelector(".swiper-pagination"), // Scoped to each swiper instance
       clickable: true, // Enable clickable pagination
