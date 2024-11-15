@@ -17,3 +17,7 @@
 .swiper-pagination-bullet.swiper-pagination-bullet-active {
   background: var(--deep-marin--300);
 }
+
+.navbar.is--scrolled {
+  background: var(--color--stone);
+}
