@@ -18,6 +18,14 @@
   background: var(--deep-marin--300);
 }
 
+.navbar {
+  transition: all 0.3s ease;
+}
+
+.navbar.hidden {
+  transform: translateY(-100%);
+}
+
 .navbar.is--scrolled {
   background: var(--color--stone);
 }

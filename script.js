@@ -133,6 +133,25 @@ $(document).ready(function () {
   });
 });
 
+// --------------------- navbar scroll down --------------------- //
+
+let lastScrollY = window.scrollY;
+const navbar = document.querySelector(".navbar");
+
+window.addEventListener("scroll", () => {
+  const currentScrollY = window.scrollY;
+
+  if (currentScrollY > lastScrollY && currentScrollY > 200) {
+    // Scrolling down and past 200px
+    navbar.classList.add("hidden");
+  } else {
+    // Scrolling up
+    navbar.classList.remove("hidden");
+  }
+
+  lastScrollY = currentScrollY;
+});
+
 // --------------------- swiper --------------------- //
 
 document.addEventListener("DOMContentLoaded", () => {
