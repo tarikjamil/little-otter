@@ -229,3 +229,39 @@ soundToggle.addEventListener("click", () => {
     gsap.to(inactiveIcon, { opacity: 1, duration: 0.3, ease: "smooth" });
   }
 });
+
+// --------------------- swiper --------------------- //
+
+const carousel = document.querySelectorAll(".is--testimonials-slider");
+
+carousel4.forEach((swiperEl) => {
+  const swiperInstance = new Swiper(swiperEl, {
+    slidesPerView: 1,
+    spaceBetween: "12rem", // Set space between slides in pixels
+    loop: false,
+    pagination: {
+      el: swiperEl.querySelector(".swiper-pagination"), // Scoped to each swiper instance
+      clickable: true, // Enable clickable pagination
+    },
+    breakpoints: {
+      768: {
+        slidesPerView: 3,
+      },
+    },
+    navigation: {
+      nextEl: swiperEl.querySelector(".swiper-button-next"), // Scoped to each swiper instance
+      prevEl: swiperEl.querySelector(".swiper-button-prev"),
+    },
+    scrollbar: {
+      el: swiperEl.querySelector(".swiper-scrollbar"),
+    },
+  });
+
+  console.log("Swiper instance created:", swiperInstance);
+
+  // Ensure Swiper is initialized if not done automatically
+  if (!swiperInstance.initialized) {
+    swiperInstance.init();
+    console.log("Swiper instance manually initialized:", swiperInstance);
+  }
+});
