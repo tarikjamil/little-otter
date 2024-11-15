@@ -56,6 +56,22 @@ document.querySelectorAll("[animation=fade]").forEach(function (fadeSplitElem) {
 });
 
 document
+  .querySelectorAll("[animation=parallax-20]")
+  .forEach(function (fadeSplitElem) {
+    gsap.from(fadeSplitElem, {
+      scrollTrigger: {
+        trigger: fadeSplitElem,
+        start: "top bottom-=100",
+        end: "bottom top",
+        scrub: true,
+        markers: false,
+      },
+      y: "40rem",
+      ease: "smooth",
+    });
+  });
+
+document
   .querySelectorAll("[animation=fade-stagger]")
   .forEach(function (fadeSplitElem) {
     gsap.from(fadeSplitElem.querySelectorAll("[animation=fade-item]"), {
