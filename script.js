@@ -6,33 +6,6 @@ gsap.registerPlugin(ScrollTrigger, CustomEase);
 
 CustomEase.create("smooth", "M0,0 C0.38,0.005 0.215,1 1,1");
 
-// --------------------- tabs change --------------------- //
-document.addEventListener("DOMContentLoaded", function () {
-  function openTabByHash() {
-    // Get the hash from the URL without the #
-    const hash = window.location.hash.substring(1);
-
-    if (hash) {
-      // Find the tab link with the corresponding ID and simulate a click
-      const targetTabLink = document.getElementById(hash);
-      if (targetTabLink) {
-        targetTabLink.click();
-      }
-    }
-  }
-
-  // Run openTabByHash once Webflow is ready
-  setTimeout(openTabByHash, 500);
-
-  // Add click event listeners to each tab link to update URL hash
-  document.querySelectorAll(".tabs-link-activity").forEach((tab) => {
-    tab.addEventListener("click", function () {
-      const tabId = tab.getAttribute("id");
-      history.pushState(null, null, `#${tabId}`);
-    });
-  });
-});
-
 // --------------------- loading --------------------- //
 
 function pageLoad() {
@@ -65,64 +38,6 @@ function pageLoad() {
 }
 
 pageLoad();
-
-// --------------------- tabs --------------------- //
-
-document.addEventListener("DOMContentLoaded", function () {
-  // Wait for Webflow to finish rendering
-  Webflow.push(function () {
-    // Get the current URL
-    const url = new URL(window.location.href);
-
-    // Check if a URL parameter is used to specify the brand (e.g., ?brand=brand-marketing)
-    const brandParam = url.searchParams.get("brand");
-
-    let targetTab;
-
-    if (brandParam) {
-      // Map the brand parameter to the corresponding data-w-tab value for all tabs
-      switch (brandParam) {
-        // Original "Activity" tabs
-        case "brand-marketing":
-          targetTab = "brand marketing";
-          break;
-        case "communication":
-          targetTab = "Communication";
-          break;
-        case "merchandising":
-          targetTab = "Merchandising";
-          break;
-        case "architecture-design":
-          targetTab = "Architecture & Design";
-          break;
-
-        // New "Make" tabs
-        case "business-concept":
-          targetTab = "business-concept";
-          break;
-        case "twin-concept":
-          targetTab = "twin-concept";
-          break;
-        case "turnkey":
-          targetTab = "Turnkey";
-          break;
-
-        default:
-          console.warn("No matching tab for brand parameter:", brandParam);
-      }
-    }
-
-    if (targetTab) {
-      // Find the tab link element using the data-w-tab attribute
-      const tabLink = document.querySelector(`[data-w-tab="${targetTab}"]`);
-      if (tabLink) {
-        tabLink.click(); // Trigger a click to activate the tab
-      } else {
-        console.warn("Tab link not found for targetTab:", targetTab);
-      }
-    }
-  });
-});
 
 // --------------------- scroll trigger --------------------- //
 
@@ -185,49 +100,6 @@ imageWrappers.forEach((imageWrapper) => {
       ease: "smooth",
     });
   });
-});
-
-// --------------------- add is--open to menu--trigger --------------------- //
-
-document.addEventListener("DOMContentLoaded", () => {
-  const menuTrigger = document.querySelector(".menu--trigger");
-  const menuSide = document.querySelector(".menu--side");
-
-  menuTrigger.addEventListener("click", () => {
-    console.log("Menu trigger clicked"); // Add this line for debugging
-
-    menuSide.classList.toggle("is--open");
-  });
-});
-
-// --------------------- video play and sound --------------------- //
-
-const video = document.getElementById("myVideo");
-const soundToggle = document.getElementById("soundToggle");
-const soundTextWrapper = document.querySelectorAll(".button--sound-text");
-const activeIcon = document.querySelector(".sound--icon-active");
-const inactiveIcon = document.querySelector(".sound--icon-inactive");
-
-// Set initial styles on page load
-window.addEventListener("load", () => {
-  gsap.set(soundTextWrapper, { y: 0 });
-  gsap.set(activeIcon, { opacity: 0 });
-  gsap.set(inactiveIcon, { opacity: 1 });
-});
-
-// Toggle sound on button click with GSAP animations
-soundToggle.addEventListener("click", () => {
-  if (video.muted) {
-    video.muted = false;
-    gsap.to(soundTextWrapper, { y: "-1.5em", duration: 0.3, ease: "smooth" });
-    gsap.to(activeIcon, { opacity: 1, duration: 0.3, ease: "smooth" });
-    gsap.to(inactiveIcon, { opacity: 0, duration: 0.3, ease: "smooth" });
-  } else {
-    video.muted = true;
-    gsap.to(soundTextWrapper, { y: 0, duration: 0.3, ease: "smooth" });
-    gsap.to(activeIcon, { opacity: 0, duration: 0.3, ease: "smooth" });
-    gsap.to(inactiveIcon, { opacity: 1, duration: 0.3, ease: "smooth" });
-  }
 });
 
 // --------------------- swiper --------------------- //
