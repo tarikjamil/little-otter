@@ -31,3 +31,9 @@
   background: var(--color--stone);
   border-bottom: solid 1px #c7c7c7;
 }
+
+.navbar--dropdown-line {
+  width: 100%;
+
+  transition: all 0.3s ease-out;
+}

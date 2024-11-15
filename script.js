@@ -296,6 +296,46 @@ window.addEventListener("scroll", () => {
   lastScrollY = currentScrollY;
 });
 
+// --------------------- navbar line with gsap flip --------------------- //
+
+document.addEventListener("DOMContentLoaded", () => {
+  const dropdownToggles = document.querySelectorAll(".navbar--dropdown-toggle");
+  const dropdownLine = document.querySelector(".navbar--dropdown-line"); // The line element to animate
+
+  // Track the currently active line state
+  let activeToggle = null;
+
+  dropdownToggles.forEach((toggle) => {
+    toggle.addEventListener("mouseenter", () => {
+      const state = Flip.getState(dropdownLine); // Capture the current position/state of the line
+
+      // Update the line position to the hovered toggle
+      toggle.appendChild(dropdownLine);
+
+      Flip.from(state, {
+        duration: 0.5,
+        ease: "power2.out",
+      });
+    });
+  });
+
+  // Optionally, return the line to its original state when leaving all toggles
+  dropdownToggles.forEach((toggle) => {
+    toggle.addEventListener("mouseleave", () => {
+      if (activeToggle) {
+        const state = Flip.getState(dropdownLine); // Capture the current position/state of the line
+
+        activeToggle.appendChild(dropdownLine);
+
+        Flip.from(state, {
+          duration: 0.5,
+          ease: "power2.out",
+        });
+      }
+    });
+  });
+});
+
 // --------------------- swiper --------------------- //
 
 document.addEventListener("DOMContentLoaded", () => {
