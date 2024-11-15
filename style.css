@@ -12,3 +12,7 @@
   border-radius: 55.859px;
   border: 1rem solid var(--deep-marin--300);
 }
+
+.swiper-pagination-bullet .swiper-pagination-bullet-active {
+  background: var(--deep-marin--300);
+}
