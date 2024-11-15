@@ -133,12 +133,12 @@ document.addEventListener("DOMContentLoaded", () => {
         height: 0,
         opacity: 0,
         duration: 0.5,
-        display: "none",
-        ease: "smooth",
+        ease: "power2.out",
         onComplete: () => {
-          list.style.display = "none";
+          list.style.display = "none"; // Set display:none after animation completes
         },
       });
+
       const parentElements = list.querySelectorAll(
         ".navbar--dropdown-title-parent, .navbar--dropdown-column"
       );
@@ -147,7 +147,7 @@ document.addEventListener("DOMContentLoaded", () => {
         opacity: 0,
         duration: 0.3,
         stagger: 0.1,
-        ease: "smooth",
+        ease: "power2.out",
       });
     });
   }
@@ -166,11 +166,11 @@ document.addEventListener("DOMContentLoaded", () => {
         dropdownList.style.display === "none" ||
         !dropdownList.style.display
       ) {
-        dropdownList.style.display = "flex";
+        dropdownList.style.display = "flex"; // Set display to flex before animation
         gsap.fromTo(
           dropdownList,
           { height: 0, opacity: 0 },
-          { height: "auto", opacity: 1, duration: 0.5, ease: "smooth" }
+          { height: "auto", opacity: 1, duration: 0.5, ease: "power2.out" }
         );
 
         const parentElements = dropdownList.querySelectorAll(
@@ -179,7 +179,7 @@ document.addEventListener("DOMContentLoaded", () => {
         gsap.fromTo(
           parentElements,
           { y: "20rem", opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.5, stagger: 0.1, ease: "smooth" }
+          { y: 0, opacity: 1, duration: 0.5, stagger: 0.1, ease: "power2.out" }
         );
       } else {
         closeAllDropdowns();
