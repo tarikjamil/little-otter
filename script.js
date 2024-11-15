@@ -300,38 +300,43 @@ window.addEventListener("scroll", () => {
 
 document.addEventListener("DOMContentLoaded", () => {
   const dropdownToggles = document.querySelectorAll(".navbar--dropdown-toggle");
-  const dropdownLine = document.querySelector(".navbar--dropdown-line"); // The line element to animate
+  const dropdownLine = document.querySelector(".navbar--dropdown-line"); // The line element
 
-  // Track the currently active line state
+  // Set up the initial state
   let activeToggle = null;
+
+  function positionLine(toggle) {
+    const toggleRect = toggle.getBoundingClientRect(); // Get the dimensions of the toggle
+    const menuRect = toggle.parentNode.getBoundingClientRect(); // Get the parent container's dimensions
+
+    const offsetX = toggleRect.left - menuRect.left; // Calculate the offset relative to the parent
+    const width = toggleRect.width; // Set the width to match the toggle
+
+    // Animate the line to match the toggle's position and width
+    gsap.to(dropdownLine, {
+      x: offsetX,
+      width: width,
+      duration: 0.5,
+      ease: "power2.out",
+    });
+  }
 
   dropdownToggles.forEach((toggle) => {
     toggle.addEventListener("mouseenter", () => {
-      const state = Flip.getState(dropdownLine); // Capture the current position/state of the line
-
-      // Update the line position to the hovered toggle
-      toggle.appendChild(dropdownLine);
-
-      Flip.from(state, {
-        duration: 0.5,
-        ease: "power2.out",
-      });
+      positionLine(toggle); // Move the line to the hovered toggle
     });
-  });
 
-  // Optionally, return the line to its original state when leaving all toggles
-  dropdownToggles.forEach((toggle) => {
     toggle.addEventListener("mouseleave", () => {
       if (activeToggle) {
-        const state = Flip.getState(dropdownLine); // Capture the current position/state of the line
-
-        activeToggle.appendChild(dropdownLine);
-
-        Flip.from(state, {
-          duration: 0.5,
-          ease: "power2.out",
-        });
+        positionLine(activeToggle); // Return to the active toggle if set
+      } else {
+        gsap.to(dropdownLine, { width: 0, duration: 0.5, ease: "power2.out" }); // Hide the line
       }
+    });
+
+    toggle.addEventListener("click", () => {
+      activeToggle = toggle; // Set the clicked toggle as active
+      positionLine(toggle);
     });
   });
 });
