@@ -51,7 +51,7 @@ document.querySelectorAll("[animation=fade]").forEach(function (fadeSplitElem) {
     y: "40rem",
     opacity: 0,
     ease: "smooth",
-    duration: 0.6,
+    duration: 0.4,
   });
 });
 
@@ -83,9 +83,9 @@ document
       y: "40rem",
       opacity: 0,
       ease: "smooth",
-      duration: 1,
+      duration: 0.6,
       stagger: {
-        each: 0.2,
+        each: 0.1,
       },
     });
   });
