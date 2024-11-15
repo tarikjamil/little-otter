@@ -90,31 +90,46 @@ document
     });
   });
 
-// Select all elements with the class
-const imageWrappers = document.querySelectorAll(".gallery--image-wrapper");
+// ------------------ accordion ------------------ //
 
-// Loop through each element and add hover animations
-imageWrappers.forEach((imageWrapper) => {
-  imageWrapper.addEventListener("mouseenter", () => {
-    gsap.to(imageWrapper, {
-      border: "1px solid var(--color--orange)",
-      borderRadius: "30rem",
-      maxWidth: "800rem",
-      boxShadow: "-8rem -11rem 37rem #00000040",
-      duration: 0.3,
-      ease: "smooth",
-    });
-  });
+$(".faq--question").on("click", function () {
+  // Close other accordions when opening new one
+  if (!$(this).hasClass("open")) {
+    $(".faq--question.open").click();
+  }
+  // Save the sibling of the toggle we clicked on
+  let sibling = $(this).siblings(".faq--response");
+  let animationDuration = 500;
 
-  imageWrapper.addEventListener("mouseleave", () => {
-    gsap.to(imageWrapper, {
-      border: "none", // Reset to the original state
-      borderRadius: "0rem",
-      maxWidth: "704rem", // Reset to original or specific value
-      boxShadow: "none",
-      duration: 0.3,
-      ease: "smooth",
+  if ($(this).hasClass("open")) {
+    // Close the content div if already open
+    sibling.animate({ height: "0px" }, animationDuration);
+  } else {
+    // Open the content div if already closed
+    sibling.css("height", "auto");
+    let autoHeight = sibling.height();
+    sibling.css("height", "0px");
+    sibling.animate({ height: autoHeight }, animationDuration, () => {
+      sibling.css("height", "auto");
+
+      // Scroll the page to the accordion, leaving 200 pixels from the top
     });
+  }
+  // Open and close the toggle div
+  $(this).toggleClass("open");
+});
+
+// --------------------- navbar --------------------- //
+
+$(document).ready(function () {
+  var scrollTop = 0;
+  $(window).scroll(function () {
+    scrollTop = $(window).scrollTop();
+    if (scrollTop >= 50) {
+      $(".navbar").addClass("is--scrolled");
+    } else if (scrollTop < 50) {
+      $(".navbar").removeClass("is--scrolled");
+    }
   });
 });
 
