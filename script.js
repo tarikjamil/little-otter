@@ -129,26 +129,29 @@ document.addEventListener("DOMContentLoaded", () => {
   function closeAllDropdowns() {
     const dropdownLists = document.querySelectorAll(".navbar--dropdown-list");
     dropdownLists.forEach((list) => {
-      gsap.to(list, {
-        height: 0,
-        opacity: 0,
-        duration: 0.5,
-        ease: "power2.out",
-        onComplete: () => {
-          list.style.display = "none"; // Set display:none after animation completes
-        },
-      });
+      if (list.classList.contains("open")) {
+        gsap.to(list, {
+          height: 0,
+          opacity: 0,
+          duration: 0.5,
+          ease: "power2.out",
+          onComplete: () => {
+            list.style.display = "none"; // Hide completely after animation
+            list.classList.remove("open");
+          },
+        });
 
-      const parentElements = list.querySelectorAll(
-        ".navbar--dropdown-title-parent, .navbar--dropdown-column"
-      );
-      gsap.to(parentElements, {
-        y: "20rem",
-        opacity: 0,
-        duration: 0.3,
-        stagger: 0.1,
-        ease: "power2.out",
-      });
+        const parentElements = list.querySelectorAll(
+          ".navbar--dropdown-title-parent, .navbar--dropdown-column"
+        );
+        gsap.to(parentElements, {
+          y: "20rem",
+          opacity: 0,
+          duration: 0.3,
+          stagger: 0.1,
+          ease: "power2.out",
+        });
+      }
     });
   }
 
@@ -158,15 +161,16 @@ document.addEventListener("DOMContentLoaded", () => {
       e.stopPropagation();
       const dropdownList = toggle.nextElementSibling;
 
-      // Close other dropdowns first
-      closeAllDropdowns();
+      if (dropdownList.classList.contains("open")) {
+        // Close if already open
+        closeAllDropdowns();
+      } else {
+        // Close other dropdowns first
+        closeAllDropdowns();
 
-      // Toggle the clicked dropdown
-      if (
-        dropdownList.style.display === "none" ||
-        !dropdownList.style.display
-      ) {
-        dropdownList.style.display = "flex"; // Set display to flex before animation
+        // Open the clicked dropdown
+        dropdownList.style.display = "flex"; // Ensure it's visible before animation
+        dropdownList.classList.add("open");
         gsap.fromTo(
           dropdownList,
           { height: 0, opacity: 0 },
@@ -181,8 +185,6 @@ document.addEventListener("DOMContentLoaded", () => {
           { y: "20rem", opacity: 0 },
           { y: 0, opacity: 1, duration: 0.5, stagger: 0.1, ease: "power2.out" }
         );
-      } else {
-        closeAllDropdowns();
       }
     });
   });
@@ -194,6 +196,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
+
 // --------------------- navbar scroll background --------------------- //
 
 $(document).ready(function () {
