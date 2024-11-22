@@ -1,0 +1,12 @@
+.filters--accordion-trigger.open .icon--20 {
+  transform: rotate(0deg);
+}
+
+.filters--accordion-trigger .icon--20 {
+  transform: rotate(180deg);
+}
+
+.filters--accordion-list {
+  height: 0;
+  overflow: hidden;
+}
