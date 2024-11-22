@@ -4,6 +4,7 @@
 
 .filters--accordion-trigger .icon--20 {
   transform: rotate(180deg);
+  transition: transform 0.3s ease;
 }
 
 .filters--accordion-list {
