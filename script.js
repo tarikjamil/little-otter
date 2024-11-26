@@ -263,6 +263,20 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
+// --------------------- navbar scroll background --------------------- //
+
+$(document).ready(function () {
+  var scrollTop = 0;
+  $(window).scroll(function () {
+    scrollTop = $(window).scrollTop();
+    if (scrollTop >= 50) {
+      $(".navbar").addClass("is--scrolled");
+    } else if (scrollTop < 50) {
+      $(".navbar").removeClass("is--scrolled");
+    }
+  });
+});
+
 // --------------------- navbar scroll down --------------------- //
 
 let lastScrollY = window.scrollY;
