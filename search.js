@@ -56,19 +56,18 @@ document.addEventListener("DOMContentLoaded", function () {
     const itemsToShow = filteredItems.slice(start, end);
 
     cmsItems.forEach((item) => {
-      item.style.display = "none"; // Hide all items
-      item.style.opacity = "0";
-      item.style.transform = "translateY(20px)";
+      console.log("Hiding item:", item.textContent.trim()); // Log when hiding items
     });
 
     itemsToShow.forEach((item, index) => {
-      item.style.display = "block";
+      console.log("Showing item:", item.textContent.trim()); // Log visible items
       setTimeout(() => {
         item.style.opacity = "1";
         item.style.transform = "translateY(0)";
-      }, index * 100); // Stagger timing
+      }, index * 100);
     });
 
+    // Update pagination controls
     renderPaginationControls(filteredItems.length);
   }
 
