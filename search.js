@@ -54,11 +54,11 @@ document.addEventListener("DOMContentLoaded", function () {
       const content = item.textContent.toLowerCase();
       if (content.includes(searchQuery)) {
         item.style.display = "block";
-        // Apply fade-in animation with stagger
+        // Apply fade-in animation only to visible items
         setTimeout(() => {
           item.style.opacity = "1";
           item.style.transform = "translateY(0)";
-        }, index * 100); // Adjust the stagger timing (100ms between items)
+        }, matchesFound * 100); // Stagger based on the number of visible items
         matchesFound++;
       } else {
         item.style.display = "none";
