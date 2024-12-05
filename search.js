@@ -50,26 +50,23 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Apply filters based on the search query
   function applyFilters() {
-    if (!searchInput) {
-      console.error("Search input field not found.");
-      return;
-    }
+    const queryFromURL =
+      new URLSearchParams(window.location.search).get("query") || "";
+    const searchQuery = searchInput
+      ? searchInput.value.toLowerCase() || queryFromURL.toLowerCase()
+      : queryFromURL.toLowerCase();
 
-    const searchQuery = searchInput.value.toLowerCase();
-
-    console.log("Applying Filters with Query:", searchQuery);
+    console.log("Search Query:", searchQuery);
 
     filteredItems = cmsItems.filter((item) => {
       const content = item.textContent.toLowerCase();
       return content.includes(searchQuery);
     });
 
-    console.log("Filtered Items Count:", filteredItems.length);
-
     applySorting(); // Sort the filtered items
     updateCount(); // Update the count
     currentPage = 1; // Reset to first page
-    renderPage(); // Render the filtered page
+    renderPage(); // Render the first page
   }
 
   // Sort the filtered items
@@ -92,17 +89,19 @@ document.addEventListener("DOMContentLoaded", function () {
     const itemsToShow = filteredItems.slice(start, end);
 
     cmsItems.forEach((item) => {
+      // Hide all items initially
       item.style.display = "none";
       item.style.opacity = "0";
       item.style.transform = "translateY(20px)";
     });
 
     itemsToShow.forEach((item, index) => {
+      // Show and animate visible items
       item.style.display = "block";
       setTimeout(() => {
         item.style.opacity = "1";
         item.style.transform = "translateY(0)";
-      }, index * 100);
+      }, index * 20); // Stagger animations
     });
 
     renderPaginationControls(filteredItems.length);
@@ -122,13 +121,13 @@ document.addEventListener("DOMContentLoaded", function () {
   // Render pagination controls
   function renderPaginationControls(totalItems) {
     const totalPages = Math.ceil(totalItems / itemsPerPage);
-    paginationContainer.innerHTML = "";
+    paginationContainer.innerHTML = ""; // Clear existing controls
 
     for (let i = 1; i <= totalPages; i++) {
       const button = document.createElement("button");
       button.textContent = i;
-      button.classList.add("pagination-button");
-      if (i === currentPage) button.classList.add("active");
+      button.classList.add("pagination--btn");
+      if (i === currentPage) button.classList.add("is--active");
       button.addEventListener("click", () => {
         currentPage = i;
         renderPage();
@@ -150,6 +149,13 @@ document.addEventListener("DOMContentLoaded", function () {
     await loadAllPages();
     console.log("All pages loaded.");
 
+    // Pre-fill search input from URL query
+    if (searchInput) {
+      const params = new URLSearchParams(window.location.search);
+      const queryFromURL = params.get("query") || "";
+      searchInput.value = queryFromURL;
+    }
+
     applyFilters(); // Apply initial filters
 
     if (loadingIndicator) {
@@ -158,12 +164,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     cmsContainer.style.visibility = "visible";
 
-    // Add real-time search functionality
+    // Add event listeners for real-time filtering and sorting
     if (searchInput) {
-      searchInput.addEventListener("input", () => {
-        console.log("Search input updated:", searchInput.value);
-        applyFilters();
-      });
+      searchInput.addEventListener("input", applyFilters);
     }
 
     if (sortDropdown) {
