@@ -91,25 +91,16 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // Apply sorting
-  function applySorting() {
-    const sortOrder = sortDropdown.value;
-
-    filteredItems.sort((a, b) => {
-      const aText = a.textContent.toLowerCase();
-      const bText = b.textContent.toLowerCase();
-      return sortOrder === "asc"
-        ? aText.localeCompare(bText)
-        : bText.localeCompare(aText);
-    });
-  }
-
   // Apply filters
   function applyFilters() {
-    const searchQuery = searchInput ? searchInput.value.toLowerCase() : "";
+    const params = new URLSearchParams(window.location.search);
+    const queryFromURL = params.get("query") || "";
+    const searchQuery = searchInput
+      ? searchInput.value.toLowerCase() || queryFromURL.toLowerCase()
+      : queryFromURL.toLowerCase();
+
     console.log("Search Query:", searchQuery);
 
-    // Filter items based on the search query
     filteredItems = cmsItems.filter((item) => {
       const content = item.textContent.toLowerCase();
       console.log("Item Content:", content);
@@ -141,6 +132,13 @@ document.addEventListener("DOMContentLoaded", function () {
     await loadAllPages();
     console.log("All pages loaded.");
 
+    // Pre-fill search bar from URL query
+    if (searchInput) {
+      const params = new URLSearchParams(window.location.search);
+      const queryFromURL = params.get("query") || "";
+      searchInput.value = queryFromURL; // Pre-fill the search bar
+    }
+
     applyFilters(); // Apply initial filters
 
     if (loadingIndicator) {
@@ -160,13 +158,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Update results in real-time
       searchInput.addEventListener("input", applyFilters);
-    }
-
-    if (sortDropdown) {
-      sortDropdown.addEventListener("change", () => {
-        applySorting();
-        renderPage(); // Re-render the page after sorting
-      });
     }
   }
 
