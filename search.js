@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   async function fetchPageContent(pageNumber) {
     try {
-      const response = await fetch(`/cms-items/page-${pageNumber}.html`);
+      const response = await fetch(`/cms-items/page-${pageNumber}`);
       if (!response.ok) {
         throw new Error(`Failed to fetch page ${pageNumber}`);
       }
