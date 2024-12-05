@@ -126,8 +126,8 @@ document.addEventListener("DOMContentLoaded", function () {
     for (let i = 1; i <= totalPages; i++) {
       const button = document.createElement("button");
       button.textContent = i;
-      button.classList.add("pagination-button");
-      if (i === currentPage) button.classList.add("active");
+      button.classList.add("pagination--btn");
+      if (i === currentPage) button.classList.add("is--active");
       button.addEventListener("click", () => {
         currentPage = i;
         renderPage();
