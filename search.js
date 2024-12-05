@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
   const totalPages = 5; // Adjust this to the actual number of pages
-  const itemsPerPage = 10; // Adjust this based on how many items per page
+  const itemsPerPage = 10; // Items per page
   const cmsContainer = document.getElementById("cms-container");
   const noResultsMessage = document.getElementById("no-results-message");
   const countElement = document.getElementById("count");
@@ -9,11 +9,11 @@ document.addEventListener("DOMContentLoaded", function () {
   const sortDropdown = document.getElementById("sort-dropdown");
   const paginationContainer = document.getElementById("pagination");
 
-  let cmsItems = []; // Store all CMS items for dynamic updates
-  let currentPage = 1; // Default to page 1
-  let filteredItems = []; // Items after applying filters/search
+  let cmsItems = []; // Store all CMS items
+  let filteredItems = []; // Filtered items after search/sort
+  let currentPage = 1; // Current page index
 
-  // Fetch items from a page
+  // Fetch items from a single page
   async function fetchPageContent(pageNumber) {
     try {
       console.log(`Fetching page /cms-items/page-${pageNumber}`);
@@ -36,47 +36,92 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // Load all CMS items
+  // Load all pages and store CMS items
   async function loadAllPages() {
     for (let i = 1; i <= totalPages; i++) {
       const items = await fetchPageContent(i);
       cmsItems.push(...items);
       items.forEach((item) => {
-        cmsContainer.appendChild(item); // Append each item to the container
+        cmsContainer.appendChild(item); // Append items to the container
       });
     }
     filteredItems = [...cmsItems]; // Start with all items
   }
 
-  // Update visible items based on current filters, search, and pagination
+  // Apply filters based on the search query
+  function applyFilters() {
+    const queryFromURL =
+      new URLSearchParams(window.location.search).get("query") || "";
+    const searchQuery = searchInput
+      ? searchInput.value.toLowerCase() || queryFromURL.toLowerCase()
+      : queryFromURL.toLowerCase();
+
+    console.log("Search Query:", searchQuery);
+
+    filteredItems = cmsItems.filter((item) => {
+      const content = item.textContent.toLowerCase();
+      return content.includes(searchQuery);
+    });
+
+    applySorting(); // Sort the filtered items
+    updateCount(); // Update the count
+    currentPage = 1; // Reset to first page
+    renderPage(); // Render the first page
+  }
+
+  // Sort the filtered items
+  function applySorting() {
+    const sortOrder = sortDropdown ? sortDropdown.value : "asc";
+
+    filteredItems.sort((a, b) => {
+      const aText = a.textContent.toLowerCase();
+      const bText = b.textContent.toLowerCase();
+      return sortOrder === "asc"
+        ? aText.localeCompare(bText)
+        : bText.localeCompare(aText);
+    });
+  }
+
+  // Render the current page of items
   function renderPage() {
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
     const itemsToShow = filteredItems.slice(start, end);
 
     cmsItems.forEach((item) => {
-      // Hide all items
+      // Hide all items initially
       item.style.display = "none";
       item.style.opacity = "0";
       item.style.transform = "translateY(20px)";
     });
 
     itemsToShow.forEach((item, index) => {
-      // Show and animate only the current page items
+      // Show and animate visible items
       item.style.display = "block";
       setTimeout(() => {
         item.style.opacity = "1";
         item.style.transform = "translateY(0)";
-      }, index * 100); // Stagger timing
+      }, index * 100); // Stagger animations
     });
 
     renderPaginationControls(filteredItems.length);
   }
 
+  // Update the count of visible items
+  function updateCount() {
+    if (countElement) {
+      countElement.textContent = filteredItems.length;
+    }
+    if (noResultsMessage) {
+      noResultsMessage.style.display =
+        filteredItems.length > 0 ? "none" : "block";
+    }
+  }
+
   // Render pagination controls
   function renderPaginationControls(totalItems) {
     const totalPages = Math.ceil(totalItems / itemsPerPage);
-    paginationContainer.innerHTML = ""; // Clear previous controls
+    paginationContainer.innerHTML = ""; // Clear existing controls
 
     for (let i = 1; i <= totalPages; i++) {
       const button = document.createElement("button");
@@ -91,35 +136,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // Apply filters
-  function applyFilters() {
-    const params = new URLSearchParams(window.location.search);
-    const queryFromURL = params.get("query") || "";
-    const searchQuery = searchInput
-      ? searchInput.value.toLowerCase() || queryFromURL.toLowerCase()
-      : queryFromURL.toLowerCase();
-
-    console.log("Search Query:", searchQuery);
-
-    filteredItems = cmsItems.filter((item) => {
-      const content = item.textContent.toLowerCase();
-      console.log("Item Content:", content);
-      return content.includes(searchQuery);
-    });
-
-    console.log("Filtered Items Count:", filteredItems.length);
-
-    applySorting(); // Reapply sorting after filtering
-
-    currentPage = 1; // Reset to the first page
-    renderPage();
-    countElement.textContent = filteredItems.length;
-
-    noResultsMessage.style.display =
-      filteredItems.length > 0 ? "none" : "block";
-  }
-
-  // Main function
+  // Main function to initialize the script
   async function main() {
     if (!cmsContainer) {
       console.error("CMS container not found");
@@ -132,11 +149,11 @@ document.addEventListener("DOMContentLoaded", function () {
     await loadAllPages();
     console.log("All pages loaded.");
 
-    // Pre-fill search bar from URL query
+    // Pre-fill search input from URL query
     if (searchInput) {
       const params = new URLSearchParams(window.location.search);
       const queryFromURL = params.get("query") || "";
-      searchInput.value = queryFromURL; // Pre-fill the search bar
+      searchInput.value = queryFromURL;
     }
 
     applyFilters(); // Apply initial filters
@@ -145,19 +162,18 @@ document.addEventListener("DOMContentLoaded", function () {
       loadingIndicator.style.display = "none";
     }
 
-    cmsContainer.style.visibility = "visible"; // Ensure the container is visible
+    cmsContainer.style.visibility = "visible";
 
-    // Add event listeners
+    // Add event listeners for real-time filtering and sorting
     if (searchInput) {
-      // Prevent form submission
-      searchInput.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") {
-          e.preventDefault();
-        }
-      });
-
-      // Update results in real-time
       searchInput.addEventListener("input", applyFilters);
+    }
+
+    if (sortDropdown) {
+      sortDropdown.addEventListener("change", () => {
+        applySorting();
+        renderPage();
+      });
     }
   }
 
