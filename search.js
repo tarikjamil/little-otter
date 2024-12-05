@@ -1,7 +1,8 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const totalPages = 10; // Total number of pages
+  const totalPages = 5; // Total number of pages
   const cmsContainer = document.getElementById("cms-container");
   const noResultsMessage = document.getElementById("no-results-message");
+  const countElement = document.getElementById("count"); // Element to show the count
 
   // Get the search query from the URL
   const params = new URLSearchParams(window.location.search);
@@ -41,20 +42,25 @@ document.addEventListener("DOMContentLoaded", function () {
   // Function to filter items based on the search query
   function filterItems() {
     const cmsItems = cmsContainer.querySelectorAll(".cms-item");
-    let matchesFound = false;
+    let matchesFound = 0;
 
     cmsItems.forEach((item) => {
       const content = item.textContent.toLowerCase();
       if (content.includes(searchQuery)) {
         item.style.display = "block";
-        matchesFound = true;
+        matchesFound++;
       } else {
         item.style.display = "none";
       }
     });
 
+    // Update the count element
+    if (countElement) {
+      countElement.textContent = matchesFound;
+    }
+
     // Show or hide "No Results Found" message
-    noResultsMessage.style.display = matchesFound ? "none" : "block";
+    noResultsMessage.style.display = matchesFound > 0 ? "none" : "block";
   }
 
   // Main function to load pages and filter results
