@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const cmsContainer = document.getElementById("cms-container");
   const noResultsMessage = document.getElementById("no-results-message");
   const countElement = document.getElementById("count");
+  const loadingIndicator = document.getElementById("loading-indicator");
 
   // Get the search query from the URL
   const params = new URLSearchParams(window.location.search);
@@ -12,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
   async function fetchPageContent(pageNumber) {
     try {
       console.log(`Fetching page /cms-items/page-${pageNumber}`);
-      const response = await fetch(`/cms-items/page-${pageNumber}`); // No `.html` appended
+      const response = await fetch(`/cms-items/page-${pageNumber}`);
       if (!response.ok) {
         throw new Error(
           `Failed to load page /cms-items/page-${pageNumber}: ${response.status}`
@@ -49,13 +50,20 @@ document.addEventListener("DOMContentLoaded", function () {
     console.log(`Total items: ${cmsItems.length}`);
     let matchesFound = 0;
 
-    cmsItems.forEach((item) => {
+    cmsItems.forEach((item, index) => {
       const content = item.textContent.toLowerCase();
       if (content.includes(searchQuery)) {
         item.style.display = "block";
+        // Apply fade-in animation with stagger
+        setTimeout(() => {
+          item.style.opacity = "1";
+          item.style.transform = "translateY(0)";
+        }, index * 100); // Adjust the stagger timing (100ms between items)
         matchesFound++;
       } else {
         item.style.display = "none";
+        item.style.opacity = "0"; // Reset opacity
+        item.style.transform = "translateY(20px)"; // Reset transform
       }
     });
 
@@ -71,6 +79,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (cmsContainer) {
       cmsContainer.style.visibility = "visible";
+    }
+
+    // Remove the loading indicator after filtering
+    if (loadingIndicator) {
+      loadingIndicator.style.display = "none";
     }
   }
 
