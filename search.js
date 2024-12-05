@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const totalPages = 5; // Adjust this to the actual number of pages
+  const totalPages = 20; // Adjust this to the actual number of pages
   const cmsContainer = document.getElementById("cms-container");
   const noResultsMessage = document.getElementById("no-results-message");
   const countElement = document.getElementById("count");
