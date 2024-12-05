@@ -61,6 +61,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Show or hide "No Results Found" message
     noResultsMessage.style.display = matchesFound > 0 ? "none" : "block";
+
+    // Show the container after filtering is complete
+    cmsContainer.style.visibility = "visible";
   }
 
   // Main function to load pages and filter results
@@ -69,6 +72,9 @@ document.addEventListener("DOMContentLoaded", function () {
       console.error("CMS container not found");
       return;
     }
+
+    // Hide the container while loading and filtering
+    cmsContainer.style.visibility = "hidden";
 
     // Load all items and then filter them
     console.log("Loading all CMS pages...");
