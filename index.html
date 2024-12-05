@@ -1,44 +1,70 @@
-<div class="richtext w-richtext">
-  <h1>Emerging Trends in CMS</h1>
-  <p>
-    The landscape of Content Management Systems is constantly evolving. Here are
-    some trends to watch in 2023:
-  </p>
-  <div id="">
-    <h2>1. Headless CMS</h2>
-    <p>
-      Headless CMS architecture allows for greater flexibility in content
-      delivery across multiple platforms.
-    </p>
-  </div>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Webflow CMS Items</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        margin: 20px;
+      }
+      .cms-item {
+        margin-bottom: 20px;
+        border: 1px solid #ddd;
+        padding: 15px;
+        border-radius: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Webflow CMS Items</h1>
+    <div id="cms-container">Loading items...</div>
 
-  <div id="">
-    <h2>2. AI Integration</h2>
-    <p>
-      Artificial Intelligence is being integrated into CMS platforms to enhance
-      user experience and automate tasks.
-    </p>
-  </div>
+    <script>
+      async function fetchCMSItems() {
+        const collectionId = "673b6e5d4003792c3842f67d"; // Your Collection ID
+        const accessToken =
+          "4f506a91a4d60d4d31883a2ea22195766528a59df550a4cab3a74338017c633a"; // Your API Token
+        const apiUrl = `https://api.webflow.com/collections/${collectionId}/items?limit=100`;
 
-  <div id="">
-    <h2>3. Enhanced Security Features</h2>
-    <p>
-      As cyber threats increase, CMS providers are focusing on improving
-      security measures.
-    </p>
-  </div>
+        try {
+          const response = await fetch(apiUrl, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              "accept-version": "1.0.0",
+            },
+          });
 
-  <div id="">
-    <h2>4. Personalization</h2>
-    <p>
-      Personalized content delivery is becoming more prevalent, allowing
-      businesses to tailor experiences for individual users.
-    </p>
-    <p>
-      Staying updated with these trends can help you leverage the full potential
-      of your CMS.
-    </p>
-  </div>
-</div>
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
 
-<a href="" class="article--link"></a>
+          const data = await response.json();
+          const items = data.items;
+
+          const container = document.getElementById("cms-container");
+          container.innerHTML = ""; // Clear the loading message
+
+          // Render items dynamically
+          items.forEach((item) => {
+            const element = document.createElement("div");
+            element.classList.add("cms-item");
+            element.innerHTML = `
+            <h2>${item.name}</h2>
+            <p>${item.description || "No description available"}</p>
+          `;
+            container.appendChild(element);
+          });
+        } catch (error) {
+          console.error("Error fetching CMS items:", error);
+          document.getElementById("cms-container").innerHTML =
+            "Failed to load items.";
+        }
+      }
+
+      fetchCMSItems();
+    </script>
+  </body>
+</html>
