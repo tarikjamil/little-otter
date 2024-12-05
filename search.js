@@ -63,7 +63,7 @@ document.addEventListener("DOMContentLoaded", function () {
       } else {
         item.style.display = "none";
         item.style.opacity = "0"; // Reset opacity
-        item.style.transform = "translateY(20px)"; // Reset transform
+        item.style.transform = "translateY(20rem)"; // Reset transform
       }
     });
 
