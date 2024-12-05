@@ -107,10 +107,16 @@ document.addEventListener("DOMContentLoaded", function () {
   // Apply filters
   function applyFilters() {
     const searchQuery = searchInput ? searchInput.value.toLowerCase() : "";
+    console.log("Search Query:", searchQuery);
+
+    // Filter items based on the search query
     filteredItems = cmsItems.filter((item) => {
       const content = item.textContent.toLowerCase();
+      console.log("Item Content:", content);
       return content.includes(searchQuery);
     });
+
+    console.log("Filtered Items Count:", filteredItems.length);
 
     applySorting(); // Reapply sorting after filtering
 
