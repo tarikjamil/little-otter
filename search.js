@@ -92,3 +92,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
   main();
 });
+
+const loadingIndicator = document.getElementById("loading-indicator");
+
+// Hide loading indicator after filtering is done
+loadingIndicator.style.display = "none";
+cmsContainer.style.visibility = "visible";
