@@ -101,7 +101,7 @@ document.addEventListener("DOMContentLoaded", function () {
       setTimeout(() => {
         item.style.opacity = "1";
         item.style.transform = "translateY(0)";
-      }, index * 100); // Stagger animations
+      }, index * 20); // Stagger animations
     });
 
     renderPaginationControls(filteredItems.length);
