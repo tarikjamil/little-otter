@@ -6,8 +6,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const countElement = document.getElementById("count");
   const loadingIndicator = document.getElementById("loading-indicator");
   const searchInput = document.getElementById("search-bar");
-  const filterDropdown = document.getElementById("filter-dropdown");
-  const sortDropdown = document.getElementById("sort-dropdown");
   const paginationContainer = document.getElementById("pagination");
 
   let cmsItems = []; // Store all CMS items for dynamic updates
@@ -56,18 +54,21 @@ document.addEventListener("DOMContentLoaded", function () {
     const itemsToShow = filteredItems.slice(start, end);
 
     cmsItems.forEach((item) => {
-      console.log("Hiding item:", item.textContent.trim()); // Log when hiding items
+      // Hide all items
+      item.style.display = "none";
+      item.style.opacity = "0";
+      item.style.transform = "translateY(20px)";
     });
 
     itemsToShow.forEach((item, index) => {
-      console.log("Showing item:", item.textContent.trim()); // Log visible items
+      // Show and animate only the current page items
+      item.style.display = "block";
       setTimeout(() => {
         item.style.opacity = "1";
         item.style.transform = "translateY(0)";
-      }, index * 100);
+      }, index * 100); // Stagger timing
     });
 
-    // Update pagination controls
     renderPaginationControls(filteredItems.length);
   }
 
@@ -91,14 +92,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Apply filters
   function applyFilters() {
-    const searchQuery = searchInput.value.toLowerCase();
-    const filterValue = filterDropdown.value.toLowerCase();
-
+    const searchQuery = searchInput ? searchInput.value.toLowerCase() : "";
     filteredItems = cmsItems.filter((item) => {
       const content = item.textContent.toLowerCase();
-      const matchesSearch = content.includes(searchQuery);
-      const matchesFilter = filterValue === "" || content.includes(filterValue);
-      return matchesSearch && matchesFilter;
+      return content.includes(searchQuery);
     });
 
     currentPage = 1; // Reset to the first page
@@ -107,21 +104,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     noResultsMessage.style.display =
       filteredItems.length > 0 ? "none" : "block";
-  }
-
-  // Apply sorting
-  function applySorting() {
-    const sortOrder = sortDropdown.value;
-
-    filteredItems.sort((a, b) => {
-      const aText = a.textContent.toLowerCase();
-      const bText = b.textContent.toLowerCase();
-      return sortOrder === "asc"
-        ? aText.localeCompare(bText)
-        : bText.localeCompare(aText);
-    });
-
-    renderPage();
   }
 
   // Main function
@@ -143,12 +125,12 @@ document.addEventListener("DOMContentLoaded", function () {
       loadingIndicator.style.display = "none";
     }
 
-    cmsContainer.style.visibility = "visible";
+    cmsContainer.style.visibility = "visible"; // Ensure the container is visible
 
     // Add event listeners
-    searchInput.addEventListener("input", applyFilters);
-    filterDropdown.addEventListener("change", applyFilters);
-    sortDropdown.addEventListener("change", applySorting);
+    if (searchInput) {
+      searchInput.addEventListener("input", applyFilters);
+    }
   }
 
   main();
