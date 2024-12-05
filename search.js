@@ -4,16 +4,18 @@ document.addEventListener("DOMContentLoaded", function () {
   const noResultsMessage = document.getElementById("no-results-message");
   const countElement = document.getElementById("count");
 
+  // Get the search query from the URL
   const params = new URLSearchParams(window.location.search);
   const searchQuery = params.get("query")?.toLowerCase() || "";
 
+  // Function to fetch and load items from a page
   async function fetchPageContent(pageNumber) {
     try {
-      console.log(`Fetching page ${pageNumber}`);
-      const response = await fetch(`/cms-items/page-${pageNumber}`);
+      console.log(`Fetching page /cms-items/page-${pageNumber}`);
+      const response = await fetch(`/cms-items/page-${pageNumber}`); // No `.html` appended
       if (!response.ok) {
         throw new Error(
-          `Failed to load page ${pageNumber}: ${response.status}`
+          `Failed to load page /cms-items/page-${pageNumber}: ${response.status}`
         );
       }
       const pageContent = await response.text();
@@ -21,21 +23,26 @@ document.addEventListener("DOMContentLoaded", function () {
       const doc = parser.parseFromString(pageContent, "text/html");
       return Array.from(doc.querySelectorAll(".cms-item"));
     } catch (error) {
-      console.error(`Error fetching page ${pageNumber}:`, error);
+      console.error(
+        `Error fetching page /cms-items/page-${pageNumber}:`,
+        error
+      );
       return [];
     }
   }
 
+  // Function to load all pages
   async function loadAllPages() {
     for (let i = 1; i <= totalPages; i++) {
       const items = await fetchPageContent(i);
       console.log(`Appending ${items.length} items from page ${i}`);
       items.forEach((item) => {
-        cmsContainer.appendChild(item);
+        cmsContainer.appendChild(item); // Append each item to the container
       });
     }
   }
 
+  // Function to filter items based on the search query
   function filterItems() {
     console.log("Filtering items...");
     const cmsItems = cmsContainer.querySelectorAll(".cms-item");
@@ -67,6 +74,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
+  // Main function to load pages and filter results
   async function main() {
     if (!cmsContainer) {
       console.error("CMS container not found");
