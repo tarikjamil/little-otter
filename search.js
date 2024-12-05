@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Function to fetch and load items from a page
   async function fetchPageContent(pageNumber) {
     try {
+      console.log(`Fetching page ${pageNumber}`);
       const response = await fetch(`/cms-items/page-${pageNumber}`);
       if (!response.ok) {
         throw new Error(
@@ -20,8 +21,6 @@ document.addEventListener("DOMContentLoaded", function () {
       const pageContent = await response.text();
       const parser = new DOMParser();
       const doc = parser.parseFromString(pageContent, "text/html");
-
-      // Return all .cms-item elements from the fetched page
       return Array.from(doc.querySelectorAll(".cms-item"));
     } catch (error) {
       console.error(`Error fetching page ${pageNumber}:`, error);
@@ -33,6 +32,7 @@ document.addEventListener("DOMContentLoaded", function () {
   async function loadAllPages() {
     for (let i = 1; i <= totalPages; i++) {
       const items = await fetchPageContent(i);
+      console.log(`Appending ${items.length} items from page ${i}`);
       items.forEach((item) => {
         cmsContainer.appendChild(item); // Append each item to the container
       });
@@ -41,7 +41,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Function to filter items based on the search query
   function filterItems() {
+    console.log("Filtering items...");
     const cmsItems = cmsContainer.querySelectorAll(".cms-item");
+    console.log(`Total items: ${cmsItems.length}`);
     let matchesFound = 0;
 
     cmsItems.forEach((item) => {
@@ -54,6 +56,8 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
 
+    console.log(`Matches found: ${matchesFound}`);
+
     // Update the count element
     if (countElement) {
       countElement.textContent = matchesFound;
@@ -63,6 +67,7 @@ document.addEventListener("DOMContentLoaded", function () {
     noResultsMessage.style.display = matchesFound > 0 ? "none" : "block";
 
     // Show the container after filtering is complete
+    console.log("Making container visible");
     cmsContainer.style.visibility = "visible";
   }
 
