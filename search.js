@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const countElement = document.getElementById("count");
   const loadingIndicator = document.getElementById("loading-indicator");
   const searchInput = document.getElementById("search-bar");
+  const sortDropdown = document.getElementById("sort-dropdown");
   const paginationContainer = document.getElementById("pagination");
 
   let cmsItems = []; // Store all CMS items for dynamic updates
@@ -90,6 +91,19 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
+  // Apply sorting
+  function applySorting() {
+    const sortOrder = sortDropdown.value;
+
+    filteredItems.sort((a, b) => {
+      const aText = a.textContent.toLowerCase();
+      const bText = b.textContent.toLowerCase();
+      return sortOrder === "asc"
+        ? aText.localeCompare(bText)
+        : bText.localeCompare(aText);
+    });
+  }
+
   // Apply filters
   function applyFilters() {
     const searchQuery = searchInput ? searchInput.value.toLowerCase() : "";
@@ -97,6 +111,8 @@ document.addEventListener("DOMContentLoaded", function () {
       const content = item.textContent.toLowerCase();
       return content.includes(searchQuery);
     });
+
+    applySorting(); // Reapply sorting after filtering
 
     currentPage = 1; // Reset to the first page
     renderPage();
@@ -129,7 +145,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Add event listeners
     if (searchInput) {
+      // Prevent form submission
+      searchInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+        }
+      });
+
+      // Update results in real-time
       searchInput.addEventListener("input", applyFilters);
+    }
+
+    if (sortDropdown) {
+      sortDropdown.addEventListener("change", () => {
+        applySorting();
+        renderPage(); // Re-render the page after sorting
+      });
     }
   }
 
