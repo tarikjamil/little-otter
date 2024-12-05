@@ -6,7 +6,7 @@ async function fetchCMSItems() {
   try {
     // Fetch CMS items from Webflow API
     const response = await fetch(
-      `https://api.webflow.com/collections/${collectionId}/items?limit=100`,
+      `const response = await fetch("https://little-otter-server.netlify.app/.netlify/functions/proxy");`,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
