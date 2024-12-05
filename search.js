@@ -1,15 +1,25 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const totalPages = 20; // Adjust this to the actual number of pages
+  const totalPages = 5; // Adjust this to the actual number of pages
   const cmsContainer = document.getElementById("cms-container");
   const noResultsMessage = document.getElementById("no-results-message");
   const countElement = document.getElementById("count");
   const loadingIndicator = document.getElementById("loading-indicator");
+  const searchInput = document.getElementById("search-bar");
 
-  // Get the search query from the URL
-  const params = new URLSearchParams(window.location.search);
-  const searchQuery = params.get("query")?.toLowerCase() || "";
+  let cmsItems = []; // Store all CMS items for dynamic updates
 
-  // Function to fetch and load items from a page
+  // Fetch all CMS items across pages
+  async function loadAllPages() {
+    for (let i = 1; i <= totalPages; i++) {
+      const items = await fetchPageContent(i);
+      cmsItems.push(...items);
+      items.forEach((item) => {
+        cmsContainer.appendChild(item); // Append each item to the container
+      });
+    }
+  }
+
+  // Fetch items from a page
   async function fetchPageContent(pageNumber) {
     try {
       console.log(`Fetching page /cms-items/page-${pageNumber}`);
@@ -32,38 +42,24 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // Function to load all pages
-  async function loadAllPages() {
-    for (let i = 1; i <= totalPages; i++) {
-      const items = await fetchPageContent(i);
-      console.log(`Appending ${items.length} items from page ${i}`);
-      items.forEach((item) => {
-        cmsContainer.appendChild(item); // Append each item to the container
-      });
-    }
-  }
-
-  // Function to filter items based on the search query
-  function filterItems() {
+  // Filter and display items dynamically
+  function updateResults(query) {
     console.log("Filtering items...");
-    const cmsItems = cmsContainer.querySelectorAll(".cms-item");
-    console.log(`Total items: ${cmsItems.length}`);
     let matchesFound = 0;
 
     cmsItems.forEach((item, index) => {
       const content = item.textContent.toLowerCase();
-      if (content.includes(searchQuery)) {
+      if (content.includes(query)) {
         item.style.display = "block";
-        // Apply fade-in animation only to visible items
         setTimeout(() => {
           item.style.opacity = "1";
           item.style.transform = "translateY(0)";
-        }, matchesFound * 100); // Stagger based on the number of visible items
+        }, matchesFound * 100); // Stagger timing for visible items
         matchesFound++;
       } else {
         item.style.display = "none";
-        item.style.opacity = "0"; // Reset opacity
-        item.style.transform = "translateY(20rem)"; // Reset transform
+        item.style.opacity = "0";
+        item.style.transform = "translateY(20px)";
       }
     });
 
@@ -76,18 +72,9 @@ document.addEventListener("DOMContentLoaded", function () {
     if (noResultsMessage) {
       noResultsMessage.style.display = matchesFound > 0 ? "none" : "block";
     }
-
-    if (cmsContainer) {
-      cmsContainer.style.visibility = "visible";
-    }
-
-    // Remove the loading indicator after filtering
-    if (loadingIndicator) {
-      loadingIndicator.style.display = "none";
-    }
   }
 
-  // Main function to load pages and filter results
+  // Main function
   async function main() {
     if (!cmsContainer) {
       console.error("CMS container not found");
@@ -98,14 +85,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
     console.log("Loading all CMS pages...");
     await loadAllPages();
-    console.log("All pages loaded. Applying search filter...");
-    filterItems();
+    console.log("All pages loaded.");
 
-    const searchInput = document.getElementById("search-bar");
-    if (searchInput) {
-      searchInput.value = searchQuery;
-      searchInput.addEventListener("input", filterItems);
+    updateResults(searchInput.value.toLowerCase()); // Initial filter based on current input
+
+    if (loadingIndicator) {
+      loadingIndicator.style.display = "none";
     }
+
+    // Add real-time search functionality
+    searchInput.addEventListener("input", (e) => {
+      const query = e.target.value.toLowerCase();
+      updateResults(query);
+    });
+
+    cmsContainer.style.visibility = "visible";
   }
 
   main();
