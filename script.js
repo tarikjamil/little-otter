@@ -319,6 +319,67 @@ $(document).ready(function () {
   });
 });
 
+// --------------------- how it works accordion --------------------- //
+
+document.addEventListener("DOMContentLoaded", () => {
+  const items = document.querySelectorAll(".howitworks--item");
+  const videos = document.querySelectorAll(".hoitworks--svg");
+  let currentIndex = 0;
+  let interval;
+
+  // Function to update active video and item
+  const updateActive = (index) => {
+    items.forEach((item, i) => {
+      item.classList.toggle("is--active", i === index);
+    });
+    videos.forEach((video, i) => {
+      video.style.display = i === index ? "block" : "none";
+    });
+    currentIndex = index;
+
+    const currentVideo = videos[currentIndex].querySelector("video");
+    currentVideo.currentTime = 0; // Reset the video
+    currentVideo.play();
+  };
+
+  // Function to play the next video
+  const playNext = () => {
+    const nextIndex = (currentIndex + 1) % videos.length; // Loop back to the first video
+    updateActive(nextIndex);
+  };
+
+  // Set up autoplay loop
+  const startAutoplay = () => {
+    interval = setInterval(playNext, 3000); // 3 seconds per video
+  };
+
+  // Stop autoplay when user interacts
+  const stopAutoplay = () => {
+    clearInterval(interval);
+  };
+
+  // Add click event to items
+  items.forEach((item, index) => {
+    item.addEventListener("click", () => {
+      stopAutoplay();
+      updateActive(index);
+      startAutoplay();
+    });
+  });
+
+  // Add event listeners for video end
+  videos.forEach((video, index) => {
+    const videoElement = video.querySelector("video");
+    videoElement.addEventListener("ended", () => {
+      playNext();
+    });
+  });
+
+  // Initialize the first video
+  updateActive(0);
+  startAutoplay();
+});
+
 // --------------------- swiper --------------------- //
 
 document.addEventListener("DOMContentLoaded", () => {
