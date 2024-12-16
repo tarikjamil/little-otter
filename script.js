@@ -200,12 +200,12 @@ document.addEventListener("DOMContentLoaded", () => {
 // --------------------- navbar mobile toggle --------------------- //
 
 document.addEventListener("DOMContentLoaded", () => {
-  const menuTrigger = document.querySelector(".navbar--menu-trigger");
   const navbarMenu = document.querySelector(".navbar--menu");
   const dropdowns = document.querySelectorAll(".navbar--dropdown");
   const buttonsWrapper = document.querySelector(".navbar--buttons-wrapper");
+  const navbarContainer = document.querySelector(".navbar");
 
-  // Function to open the menu
+  // Function to open the menu on hover
   function openMenu() {
     navbarMenu.style.display = "flex"; // Ensure visibility before animation
     gsap.fromTo(
@@ -221,7 +221,7 @@ document.addEventListener("DOMContentLoaded", () => {
     navbarMenu.classList.add("open");
   }
 
-  // Function to close the menu
+  // Function to close the menu on mouse leave
   function closeMenu() {
     gsap.to([...dropdowns, buttonsWrapper], {
       y: "20rem",
@@ -242,22 +242,16 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Toggle menu on trigger click
-  menuTrigger.addEventListener("click", (e) => {
-    e.stopPropagation();
-    if (navbarMenu.classList.contains("open")) {
-      closeMenu();
-    } else {
+  // Open menu on mouse enter
+  navbarContainer.addEventListener("mouseenter", () => {
+    if (!navbarMenu.classList.contains("open")) {
       openMenu();
     }
   });
 
-  // Close menu when clicking outside
-  document.addEventListener("click", (e) => {
-    if (
-      !e.target.closest(".navbar--menu") &&
-      navbarMenu.classList.contains("open")
-    ) {
+  // Close menu on mouse leave
+  navbarContainer.addEventListener("mouseleave", () => {
+    if (navbarMenu.classList.contains("open")) {
       closeMenu();
     }
   });
