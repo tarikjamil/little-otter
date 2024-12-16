@@ -259,17 +259,27 @@ document.addEventListener("DOMContentLoaded", () => {
 // --------------------- navbar line with gsap flip --------------------- //
 
 $(document).ready(function () {
-  // Position the .navbar--dropdown-line on page load
+  // Ensure .navbar--dropdown-line exists
+  if ($(".navbar--dropdown-line").length === 0) {
+    console.error("Error: .navbar--dropdown-line is missing from the DOM.");
+    return;
+  }
+
+  // Find the initial target toggle on page load
   const initialTargetToggle = $(".navbar--dropdown-list.w--current")
     .siblings(".navbar--dropdown-toggle")
     .first();
 
   if (initialTargetToggle.length) {
+    // Append the line to the correct toggle
     initialTargetToggle.append($(".navbar--dropdown-line"));
     $(".navbar--dropdown-line").css("opacity", "1");
+    console.log("Appended .navbar--dropdown-line to initial target toggle.");
+  } else {
+    console.warn("No .navbar--dropdown-list with w--current found.");
   }
 
-  // Add hover functionality for dropdown toggles
+  // Hover functionality
   $(".navbar--dropdown-toggle").on("mouseenter", function () {
     $(".navbar--dropdown-line").css("opacity", "1"); // Ensure the line is visible
     const state = Flip.getState(".navbar--dropdown-line"); // Capture the current position/state
@@ -280,7 +290,7 @@ $(document).ready(function () {
     });
   });
 
-  // Add functionality for when the mouse leaves the navbar menu
+  // Mouse leave functionality
   $(".navbar--menu").on("mouseleave", function () {
     // Check if there's a `w--current` class in sibling `.navbar--dropdown-list`
     const targetToggle = $(".navbar--dropdown-list.w--current")
@@ -288,7 +298,6 @@ $(document).ready(function () {
       .first();
 
     if (targetToggle.length) {
-      // If there's a target, move the line back to it
       const state = Flip.getState(".navbar--dropdown-line"); // Capture the current position/state
       targetToggle.append($(".navbar--dropdown-line")); // Move the line back to the correct toggle
       Flip.from(state, {
@@ -296,7 +305,6 @@ $(document).ready(function () {
         ease: "power2.out",
       });
     } else {
-      // If no target exists, simply hide the line
       $(".navbar--dropdown-line").css("opacity", "0");
     }
   });
