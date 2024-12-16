@@ -36,3 +36,8 @@
 .navbar--dropdown-line {
   width: 100%;
 }
+
+.howitworks--item.is--active .howitworks--number.is--empty {
+  background: var(--deep-marin--900);
+  color: white;
+}
