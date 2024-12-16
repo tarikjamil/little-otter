@@ -195,6 +195,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const navbarMenu = document.querySelector(".navbar--menu");
   const dropdowns = document.querySelectorAll(".navbar--dropdown");
   const buttonsWrapper = document.querySelector(".navbar--buttons-wrapper");
+  const menuIcon = document.querySelector(".menu--icon");
+  const menuIconClose = document.querySelector(".menu--icon-close");
 
   // Function to open the menu
   function openMenu() {
@@ -209,6 +211,11 @@ document.addEventListener("DOMContentLoaded", () => {
       { y: "20rem", opacity: 0 },
       { y: 0, opacity: 1, duration: 0.5, stagger: 0.1, ease: "power2.out" }
     );
+
+    // Animate icons
+    gsap.to(menuIcon, { opacity: 0, duration: 0.3, ease: "power2.out" });
+    gsap.to(menuIconClose, { opacity: 1, duration: 0.3, ease: "power2.out" });
+
     navbarMenu.classList.add("open");
   }
 
@@ -231,6 +238,10 @@ document.addEventListener("DOMContentLoaded", () => {
         navbarMenu.classList.remove("open");
       },
     });
+
+    // Animate icons
+    gsap.to(menuIcon, { opacity: 1, duration: 0.3, ease: "power2.out" });
+    gsap.to(menuIconClose, { opacity: 0, duration: 0.3, ease: "power2.out" });
   }
 
   // Toggle menu on trigger click
