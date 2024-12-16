@@ -123,77 +123,68 @@ $(".faq--question").on("click", function () {
 
 // GSAP Dropdown Logic
 document.addEventListener("DOMContentLoaded", () => {
-  const dropdownToggles = document.querySelectorAll(".navbar--dropdown-toggle");
+  const dropdowns = document.querySelectorAll(".navbar--dropdown");
 
-  // Close all dropdowns
-  function closeAllDropdowns() {
-    const dropdownLists = document.querySelectorAll(".navbar--dropdown-list");
-    dropdownLists.forEach((list) => {
-      if (list.classList.contains("open")) {
-        gsap.to(list, {
-          height: 0,
-          opacity: 0,
-          duration: 0.5,
-          ease: "power2.out",
-          onComplete: () => {
-            list.style.display = "none"; // Hide completely after animation
-            list.classList.remove("open");
-          },
-        });
+  // Close specific dropdown
+  function closeDropdown(dropdownList) {
+    if (dropdownList.classList.contains("open")) {
+      gsap.to(dropdownList, {
+        height: 0,
+        opacity: 0,
+        duration: 0.5,
+        ease: "power2.out",
+        onComplete: () => {
+          dropdownList.style.display = "none"; // Hide completely after animation
+          dropdownList.classList.remove("open");
+        },
+      });
 
-        const parentElements = list.querySelectorAll(
-          ".navbar--dropdown-title-parent, .navbar--dropdown-column"
-        );
-        gsap.to(parentElements, {
-          y: "20rem",
-          opacity: 0,
-          duration: 0.3,
-          stagger: 0.1,
-          ease: "power2.out",
-        });
-      }
-    });
+      const parentElements = dropdownList.querySelectorAll(
+        ".navbar--dropdown-title-parent, .navbar--dropdown-column"
+      );
+      gsap.to(parentElements, {
+        y: "20rem",
+        opacity: 0,
+        duration: 0.3,
+        stagger: 0.1,
+        ease: "power2.out",
+      });
+    }
   }
 
-  // Toggle specific dropdown
-  dropdownToggles.forEach((toggle) => {
-    toggle.addEventListener("click", (e) => {
-      e.stopPropagation();
-      const dropdownList = toggle.nextElementSibling;
+  // Open specific dropdown
+  function openDropdown(dropdownList) {
+    dropdownList.style.display = "flex"; // Ensure it's visible before animation
+    dropdownList.classList.add("open");
+    gsap.fromTo(
+      dropdownList,
+      { height: 0, opacity: 0 },
+      { height: "auto", opacity: 1, duration: 0.5, ease: "power2.out" }
+    );
 
-      if (dropdownList.classList.contains("open")) {
-        // Close if already open
-        closeAllDropdowns();
-      } else {
-        // Close other dropdowns first
-        closeAllDropdowns();
+    const parentElements = dropdownList.querySelectorAll(
+      ".navbar--dropdown-title-parent, .navbar--dropdown-column"
+    );
+    gsap.fromTo(
+      parentElements,
+      { y: "20rem", opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.5, stagger: 0.1, ease: "power2.out" }
+    );
+  }
 
-        // Open the clicked dropdown
-        dropdownList.style.display = "flex"; // Ensure it's visible before animation
-        dropdownList.classList.add("open");
-        gsap.fromTo(
-          dropdownList,
-          { height: 0, opacity: 0 },
-          { height: "auto", opacity: 1, duration: 0.5, ease: "power2.out" }
-        );
+  // Add hover events to dropdowns
+  dropdowns.forEach((dropdown) => {
+    const dropdownList = dropdown.querySelector(".navbar--dropdown-list");
 
-        const parentElements = dropdownList.querySelectorAll(
-          ".navbar--dropdown-title-parent, .navbar--dropdown-column"
-        );
-        gsap.fromTo(
-          parentElements,
-          { y: "20rem", opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.5, stagger: 0.1, ease: "power2.out" }
-        );
+    dropdown.addEventListener("mouseenter", () => {
+      if (!dropdownList.classList.contains("open")) {
+        openDropdown(dropdownList);
       }
     });
-  });
 
-  // Close dropdown when clicking outside
-  document.addEventListener("click", (e) => {
-    if (!e.target.closest(".navbar--dropdown")) {
-      closeAllDropdowns();
-    }
+    dropdown.addEventListener("mouseleave", () => {
+      closeDropdown(dropdownList);
+    });
   });
 });
 
