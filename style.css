@@ -50,3 +50,7 @@
 .faq--question.open .faq--icon {
   transform: rotate(180deg);
 }
+
+.menu--icon-close {
+  opacity: 0;
+}
