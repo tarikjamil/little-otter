@@ -256,14 +256,48 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // --------------------- navbar scroll background --------------------- //
 
+// --------------------- navbar line with gsap flip --------------------- //
+
 $(document).ready(function () {
-  var scrollTop = 0;
-  $(window).scroll(function () {
-    scrollTop = $(window).scrollTop();
-    if (scrollTop >= 50) {
-      $(".navbar").addClass("is--scrolled");
-    } else if (scrollTop < 50) {
-      $(".navbar").removeClass("is--scrolled");
+  // Position the .navbar--dropdown-line on page load
+  const initialTargetToggle = $(".navbar--dropdown-list.w--current")
+    .siblings(".navbar--dropdown-toggle")
+    .first();
+
+  if (initialTargetToggle.length) {
+    initialTargetToggle.append($(".navbar--dropdown-line"));
+    $(".navbar--dropdown-line").css("opacity", "1");
+  }
+
+  // Add hover functionality for dropdown toggles
+  $(".navbar--dropdown-toggle").on("mouseenter", function () {
+    $(".navbar--dropdown-line").css("opacity", "1"); // Ensure the line is visible
+    const state = Flip.getState(".navbar--dropdown-line"); // Capture the current position/state
+    $(this).append($(".navbar--dropdown-line")); // Move the line to the hovered toggle
+    Flip.from(state, {
+      duration: 0.4,
+      ease: "power2.out",
+    });
+  });
+
+  // Add functionality for when the mouse leaves the navbar menu
+  $(".navbar--menu").on("mouseleave", function () {
+    // Check if there's a `w--current` class in sibling `.navbar--dropdown-list`
+    const targetToggle = $(".navbar--dropdown-list.w--current")
+      .siblings(".navbar--dropdown-toggle")
+      .first();
+
+    if (targetToggle.length) {
+      // If there's a target, move the line back to it
+      const state = Flip.getState(".navbar--dropdown-line"); // Capture the current position/state
+      targetToggle.append($(".navbar--dropdown-line")); // Move the line back to the correct toggle
+      Flip.from(state, {
+        duration: 0.4,
+        ease: "power2.out",
+      });
+    } else {
+      // If no target exists, simply hide the line
+      $(".navbar--dropdown-line").css("opacity", "0");
     }
   });
 });
