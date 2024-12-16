@@ -360,3 +360,30 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
+
+// --------------------- swiper dividers --------------------- //
+
+document.addEventListener("DOMContentLoaded", function () {
+  // Select the container with the bullets
+  const paginationContainer = document.querySelector(".swiper-pagination");
+
+  if (paginationContainer) {
+    // Get all the .swiper-pagination-bullet elements
+    const bullets = paginationContainer.querySelectorAll(
+      ".swiper-pagination-bullet"
+    );
+
+    // Loop through the bullets and insert a divider after each one except the last
+    bullets.forEach((bullet, index) => {
+      if (index < bullets.length - 1) {
+        // Skip the last bullet
+        // Create a new divider element
+        const divider = document.createElement("div");
+        divider.classList.add("swiper-pagination-divider");
+
+        // Insert the divider after the current bullet
+        bullet.after(divider);
+      }
+    });
+  }
+});
