@@ -290,25 +290,30 @@ window.addEventListener("scroll", () => {
 // --------------------- navbar line with gsap flip --------------------- //
 
 $(document).ready(function () {
-  // Dynamically create the .navbar--dropdown-line element
+  // Create the .navbar--dropdown-line dynamically
   const dropdownLine = $('<div class="navbar--dropdown-line"></div>');
 
-  // Step 1: Find the toggle with a .w--current sibling and append the line
-  const initialTargetToggle = $(".navbar--dropdown-list.w--current")
+  // Find the toggle whose sibling dropdown list contains a child with .w--current
+  const initialTargetToggle = $(".navbar--dropdown-list")
+    .filter(function () {
+      // Check if this .navbar--dropdown-list contains a child with .w--current
+      return $(this).find(".w--current").length > 0;
+    })
     .siblings(".navbar--dropdown-toggle")
     .first();
 
   if (initialTargetToggle.length) {
-    initialTargetToggle.append(dropdownLine); // Append the line
-    dropdownLine.css("opacity", "1"); // Make it visible
+    // Append the line to the correct toggle and make it visible
+    initialTargetToggle.append(dropdownLine);
+    dropdownLine.css("opacity", "1");
     console.log("Appended .navbar--dropdown-line to:", initialTargetToggle[0]);
   } else {
     console.warn(
-      "No .navbar--dropdown-list with w--current found on page load."
+      "No .navbar--dropdown-list containing .w--current found on page load."
     );
   }
 
-  // Step 2: Hover functionality for dropdown toggles
+  // Hover functionality for toggles
   $(".navbar--dropdown-toggle").on("mouseenter", function () {
     dropdownLine.css("opacity", "1"); // Ensure the line is visible
     const state = Flip.getState(dropdownLine[0]); // Capture the current position/state
@@ -320,9 +325,13 @@ $(document).ready(function () {
     });
   });
 
-  // Step 3: Mouse leave functionality for the entire menu
+  // Mouse leave functionality for the entire navbar
   $(".navbar--menu").on("mouseleave", function () {
-    const targetToggle = $(".navbar--dropdown-list.w--current")
+    const targetToggle = $(".navbar--dropdown-list")
+      .filter(function () {
+        // Check if this .navbar--dropdown-list contains a child with .w--current
+        return $(this).find(".w--current").length > 0;
+      })
       .siblings(".navbar--dropdown-toggle")
       .first();
 
@@ -335,7 +344,7 @@ $(document).ready(function () {
         ease: "power2.out",
       });
     } else {
-      dropdownLine.css("opacity", "0"); // Hide the line if no target exists
+      dropdownLine.css("opacity", "0"); // Hide the line if no valid target exists
       console.warn("No .w--current found on mouse leave. Hiding line.");
     }
   });
