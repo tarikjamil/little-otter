@@ -242,29 +242,24 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Open menu on hover
-  menuTrigger.addEventListener("mouseenter", () => {
-    if (!navbarMenu.classList.contains("open")) {
+  // Toggle menu on trigger click
+  menuTrigger.addEventListener("click", (e) => {
+    e.stopPropagation();
+    if (navbarMenu.classList.contains("open")) {
+      closeMenu();
+    } else {
       openMenu();
     }
   });
 
-  // Close menu on mouse leave
-  menuTrigger.addEventListener("mouseleave", () => {
-    // Close the menu only if the cursor is outside the menu
-    const closeOnMouseLeave = (e) => {
-      if (!e.target.closest(".navbar--menu")) {
-        closeMenu();
-        document.removeEventListener("mousemove", closeOnMouseLeave);
-      }
-    };
-
-    document.addEventListener("mousemove", closeOnMouseLeave);
-  });
-
-  // Also close the menu if the cursor leaves the menu
-  navbarMenu.addEventListener("mouseleave", () => {
-    closeMenu();
+  // Close menu when clicking outside
+  document.addEventListener("click", (e) => {
+    if (
+      !e.target.closest(".navbar--menu") &&
+      navbarMenu.classList.contains("open")
+    ) {
+      closeMenu();
+    }
   });
 });
 
