@@ -301,12 +301,23 @@ $(document).ready(function () {
   });
 
   $(".navbar--menu").on("mouseleave", function () {
-    $(".navbar--dropdown-line").css("opacity", "0"); // Hide the line
-    const state = Flip.getState(".navbar--dropdown-line"); // Capture the current position/state
-    Flip.from(state, {
-      duration: 0.4,
-      ease: "power2.out",
-    });
+    // Check if there's a `w--current` class in sibling `.navbar--dropdown-list`
+    const targetToggle = $(".navbar--dropdown-list.w--current")
+      .siblings(".navbar--dropdown-toggle")
+      .first();
+
+    if (targetToggle.length) {
+      // If there's a target, move the line back to it
+      const state = Flip.getState(".navbar--dropdown-line"); // Capture the current position/state
+      targetToggle.append($(".navbar--dropdown-line")); // Move the line back to the correct toggle
+      Flip.from(state, {
+        duration: 0.4,
+        ease: "power2.out",
+      });
+    } else {
+      // If no target exists, simply hide the line
+      $(".navbar--dropdown-line").css("opacity", "0");
+    }
   });
 });
 
