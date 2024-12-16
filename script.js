@@ -380,6 +380,48 @@ document.addEventListener("DOMContentLoaded", () => {
   startAutoplay();
 });
 
+// --------------------- show more button --------------------- //
+
+document.addEventListener("DOMContentLoaded", function () {
+  // Select elements
+  const containerShowMore = document.querySelector(
+    ".container--1248.is--showmore"
+  );
+  const showMoreBtn = document.querySelector(".showmore--btn");
+  const containerFlex = document.querySelector(".container--1248-flex");
+  const showMoreGradient = document.querySelector(".showmore--gradient");
+
+  // Set initial height on page load
+  gsap.set(containerShowMore, { height: "468rem" });
+
+  // Add click event to the button
+  showMoreBtn.addEventListener("click", () => {
+    // Animate the height to auto
+    gsap.to(containerShowMore, {
+      height: "auto",
+      duration: 0.8,
+      ease: "power2.out",
+    });
+
+    // Fade out containerFlex and set display to none
+    gsap.to(containerFlex, {
+      opacity: 0,
+      duration: 0.5,
+      ease: "power1.out",
+      onComplete: () => {
+        containerFlex.style.display = "none";
+      },
+    });
+
+    // Fade out the gradient
+    gsap.to(showMoreGradient, {
+      opacity: 0,
+      duration: 0.5,
+      ease: "power1.out",
+    });
+  });
+});
+
 // --------------------- swiper --------------------- //
 
 document.addEventListener("DOMContentLoaded", () => {
