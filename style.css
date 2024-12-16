@@ -41,3 +41,12 @@
   background: var(--deep-marin--900);
   color: white;
 }
+
+.faq--question .faq--icon {
+  transform: rotate(0deg);
+  transition: all 0.3s ease;
+}
+
+.faq--question.open .faq--icon {
+  transform: rotate(180deg);
+}
