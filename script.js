@@ -256,56 +256,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // --------------------- navbar scroll background --------------------- //
 
-// --------------------- navbar line with gsap flip --------------------- //
-
 $(document).ready(function () {
-  // Create the .navbar--dropdown-line element dynamically
-  const dropdownLine = $('<div class="navbar--dropdown-line"></div>');
-
-  // Find the initial target toggle based on .w--current
-  const initialTargetToggle = $(".navbar--dropdown-list.w--current")
-    .siblings(".navbar--dropdown-toggle")
-    .first();
-
-  if (initialTargetToggle.length) {
-    // Append the line to the correct toggle
-    initialTargetToggle.append(dropdownLine);
-    dropdownLine.css("opacity", "1");
-    console.log("Added .navbar--dropdown-line to the initial target toggle.");
-  } else {
-    console.warn(
-      "No .navbar--dropdown-list with w--current found on page load."
-    );
-  }
-
-  // Hover functionality for dropdown toggles
-  $(".navbar--dropdown-toggle").on("mouseenter", function () {
-    dropdownLine.css("opacity", "1"); // Ensure the line is visible
-    const state = Flip.getState(dropdownLine[0]); // Capture the current position/state
-    $(this).append(dropdownLine); // Move the line to the hovered toggle
-    Flip.from(state, {
-      duration: 0.4,
-      ease: "power2.out",
-    });
-  });
-
-  // Mouse leave functionality for the entire menu
-  $(".navbar--menu").on("mouseleave", function () {
-    // Check for the .w--current class to return the line to the correct toggle
-    const targetToggle = $(".navbar--dropdown-list.w--current")
-      .siblings(".navbar--dropdown-toggle")
-      .first();
-
-    if (targetToggle.length) {
-      const state = Flip.getState(dropdownLine[0]); // Capture the current position/state
-      targetToggle.append(dropdownLine); // Move the line back to the correct toggle
-      Flip.from(state, {
-        duration: 0.4,
-        ease: "power2.out",
-      });
-    } else {
-      // If no .w--current is found, hide the line
-      dropdownLine.css("opacity", "0");
+  var scrollTop = 0;
+  $(window).scroll(function () {
+    scrollTop = $(window).scrollTop();
+    if (scrollTop >= 50) {
+      $(".navbar").addClass("is--scrolled");
+    } else if (scrollTop < 50) {
+      $(".navbar").removeClass("is--scrolled");
     }
   });
 });
@@ -332,33 +290,53 @@ window.addEventListener("scroll", () => {
 // --------------------- navbar line with gsap flip --------------------- //
 
 $(document).ready(function () {
+  // Dynamically create the .navbar--dropdown-line element
+  const dropdownLine = $('<div class="navbar--dropdown-line"></div>');
+
+  // Step 1: Find the toggle with a .w--current sibling and append the line
+  const initialTargetToggle = $(".navbar--dropdown-list.w--current")
+    .siblings(".navbar--dropdown-toggle")
+    .first();
+
+  if (initialTargetToggle.length) {
+    initialTargetToggle.append(dropdownLine); // Append the line
+    dropdownLine.css("opacity", "1"); // Make it visible
+    console.log("Appended .navbar--dropdown-line to:", initialTargetToggle[0]);
+  } else {
+    console.warn(
+      "No .navbar--dropdown-list with w--current found on page load."
+    );
+  }
+
+  // Step 2: Hover functionality for dropdown toggles
   $(".navbar--dropdown-toggle").on("mouseenter", function () {
-    $(".navbar--dropdown-line").css("opacity", "1"); // Ensure the line is visible
-    const state = Flip.getState(".navbar--dropdown-line"); // Capture the current position/state
-    $(this).append($(".navbar--dropdown-line")); // Move the line to the hovered toggle
+    dropdownLine.css("opacity", "1"); // Ensure the line is visible
+    const state = Flip.getState(dropdownLine[0]); // Capture the current position/state
+    $(this).append(dropdownLine); // Move the line to the hovered toggle
+    console.log("Moved .navbar--dropdown-line to hovered toggle:", this);
     Flip.from(state, {
       duration: 0.4,
       ease: "power2.out",
     });
   });
 
+  // Step 3: Mouse leave functionality for the entire menu
   $(".navbar--menu").on("mouseleave", function () {
-    // Check if there's a `w--current` class in sibling `.navbar--dropdown-list`
     const targetToggle = $(".navbar--dropdown-list.w--current")
       .siblings(".navbar--dropdown-toggle")
       .first();
 
     if (targetToggle.length) {
-      // If there's a target, move the line back to it
-      const state = Flip.getState(".navbar--dropdown-line"); // Capture the current position/state
-      targetToggle.append($(".navbar--dropdown-line")); // Move the line back to the correct toggle
+      const state = Flip.getState(dropdownLine[0]); // Capture the current position/state
+      targetToggle.append(dropdownLine); // Move the line back to the correct toggle
+      console.log("Returned .navbar--dropdown-line to:", targetToggle[0]);
       Flip.from(state, {
         duration: 0.4,
         ease: "power2.out",
       });
     } else {
-      // If no target exists, simply hide the line
-      $(".navbar--dropdown-line").css("opacity", "0");
+      dropdownLine.css("opacity", "0"); // Hide the line if no target exists
+      console.warn("No .w--current found on mouse leave. Hiding line.");
     }
   });
 });
