@@ -200,12 +200,12 @@ document.addEventListener("DOMContentLoaded", () => {
 // --------------------- navbar mobile toggle --------------------- //
 
 document.addEventListener("DOMContentLoaded", () => {
+  const menuTrigger = document.querySelector(".navbar--menu-trigger");
   const navbarMenu = document.querySelector(".navbar--menu");
   const dropdowns = document.querySelectorAll(".navbar--dropdown");
   const buttonsWrapper = document.querySelector(".navbar--buttons-wrapper");
-  const navbarContainer = document.querySelector(".navbar");
 
-  // Function to open the menu on hover
+  // Function to open the menu
   function openMenu() {
     navbarMenu.style.display = "flex"; // Ensure visibility before animation
     gsap.fromTo(
@@ -221,7 +221,7 @@ document.addEventListener("DOMContentLoaded", () => {
     navbarMenu.classList.add("open");
   }
 
-  // Function to close the menu on mouse leave
+  // Function to close the menu
   function closeMenu() {
     gsap.to([...dropdowns, buttonsWrapper], {
       y: "20rem",
@@ -242,18 +242,29 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Open menu on mouse enter
-  navbarContainer.addEventListener("mouseenter", () => {
+  // Open menu on hover
+  menuTrigger.addEventListener("mouseenter", () => {
     if (!navbarMenu.classList.contains("open")) {
       openMenu();
     }
   });
 
   // Close menu on mouse leave
-  navbarContainer.addEventListener("mouseleave", () => {
-    if (navbarMenu.classList.contains("open")) {
-      closeMenu();
-    }
+  menuTrigger.addEventListener("mouseleave", () => {
+    // Close the menu only if the cursor is outside the menu
+    const closeOnMouseLeave = (e) => {
+      if (!e.target.closest(".navbar--menu")) {
+        closeMenu();
+        document.removeEventListener("mousemove", closeOnMouseLeave);
+      }
+    };
+
+    document.addEventListener("mousemove", closeOnMouseLeave);
+  });
+
+  // Also close the menu if the cursor leaves the menu
+  navbarMenu.addEventListener("mouseleave", () => {
+    closeMenu();
   });
 });
 
