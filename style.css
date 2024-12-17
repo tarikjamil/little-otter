@@ -74,3 +74,16 @@
   grid-template-columns: 1fr 1fr;
   gap: 24rem;
 }
+
+.form-columns-1 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24rem;
+}
+
+form label {
+  color: var(--deep-marin--900);
+  font-size: 16rem;
+  line-height: 150%;
+  margin-bottom: 8rem;
+}
