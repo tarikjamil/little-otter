@@ -361,6 +361,20 @@ $(document).ready(function () {
   });
 });
 
+// --------------------- navbar active state --------------------- //
+
+document.addEventListener("DOMContentLoaded", function () {
+  // Select all elements with the class `.navbar--dropdown`
+  const dropdowns = document.querySelectorAll(".navbar--dropdown");
+
+  dropdowns.forEach((dropdown) => {
+    // Check if the dropdown contains an element with the class `.w--current`
+    if (dropdown.querySelector(".w--current")) {
+      dropdown.classList.add("is--active");
+    }
+  });
+});
+
 // --------------------- how it works accordion --------------------- //
 
 document.addEventListener("DOMContentLoaded", () => {

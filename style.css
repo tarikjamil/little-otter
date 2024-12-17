@@ -54,3 +54,7 @@
 .menu--icon-close {
   opacity: 0;
 }
+
+.navbar--dropdown.is--active .navbar--dropdown-toggle {
+  font-weight: 700;
+}
