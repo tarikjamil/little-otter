@@ -68,12 +68,14 @@
   color: var(--deep-marin--900);
   background: white;
   width: 100%;
+  margin-bottom: 12rem;
 }
 
 .form-columns-2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 24rem;
+  margin-bottom: 12rem;
 }
 
 .form-columns-1 {
