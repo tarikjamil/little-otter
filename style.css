@@ -94,3 +94,23 @@ form label {
 .hs-form-field {
   width: 100% !important;
 }
+
+.actions {
+  display: flex;
+  justify-content: flex-center;
+}
+
+.hs-button {
+  background: var(--deep-marin--900);
+  color: white;
+  border-radius: 8rem;
+  padding: 12rem 24rem;
+  font-size: 16rem;
+  line-height: 150%;
+  font-weight: 700;
+  transition: all 0.3s ease;
+}
+
+.hs-button:hover {
+  background: var(--deep-marin--700);
+}
