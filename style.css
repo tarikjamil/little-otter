@@ -155,3 +155,11 @@ textarea.hs-input {
   height: 120rem;
   padding: 16rem;
 }
+
+/* ------------ hubspot form mobile ------------ */
+
+@media screen and (max-width: 767px) {
+  .form-columns-2 {
+    grid-template-columns: 1fr;
+  }
+}
