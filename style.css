@@ -80,13 +80,14 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 24rem;
-  margin-bottom: 12rem;
+  margin-bottom: 12rem !important;
 }
 
 .form-columns-1 {
   display: grid;
   grid-template-columns: 1fr;
   gap: 24rem;
+  margin-bottom: 12rem !important;
 }
 
 form label {
