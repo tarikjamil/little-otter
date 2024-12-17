@@ -139,7 +139,7 @@ select.hs-input {
 .hs-error-msgs {
   color: red;
   font-size: 12rem;
-  margin-top: 8rem;
+  margin-top: 0rem;
   margin-bottom: 0rem !important;
 }
 
