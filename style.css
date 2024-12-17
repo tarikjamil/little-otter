@@ -61,6 +61,10 @@
 
 /* ------------ hubspot form ------------ */
 
+.input {
+  margin-right: 0px !important;
+}
+
 .hs-input {
   height: 48rem;
   border-width: 0rem;
