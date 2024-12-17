@@ -67,7 +67,7 @@
   border-radius: 8rem;
   color: var(--deep-marin--900);
   background: white;
-  width: 100%;
+  width: 100% !important;
   margin-bottom: 12rem;
 }
 
