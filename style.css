@@ -92,5 +92,5 @@ form label {
 }
 
 .hs-form-field {
-  width: 100%;
+  width: 100% !important;
 }
