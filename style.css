@@ -156,7 +156,7 @@ textarea.hs-input {
   padding: 16rem;
 }
 
-.fieldset {
+fieldset {
   max-width: none !important;
 }
 
@@ -168,3 +168,5 @@ textarea.hs-input {
     gap: 12rem;
   }
 }
+
+/* ------------ hubspot form newsletter ------------ */
