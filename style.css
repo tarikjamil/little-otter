@@ -156,6 +156,10 @@ textarea.hs-input {
   padding: 16rem;
 }
 
+.fieldset {
+  max-width: none !important;
+}
+
 /* ------------ hubspot form mobile ------------ */
 
 @media screen and (max-width: 767px) {
