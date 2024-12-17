@@ -87,3 +87,7 @@ form label {
   line-height: 150%;
   margin-bottom: 8rem;
 }
+
+.hs-form-field {
+  width: 100%;
+}
