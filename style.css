@@ -133,7 +133,7 @@ select.hs-input {
   -webkit-appearance: none; /* Chrome, Safari, Edge */
   -moz-appearance: none; /* Firefox */
   appearance: none; /* Standard property */
-  background: none;
+  background: white;
 }
 
 .hs-error-msgs {
