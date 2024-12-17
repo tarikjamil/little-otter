@@ -161,5 +161,6 @@ textarea.hs-input {
 @media screen and (max-width: 767px) {
   .form-columns-2 {
     grid-template-columns: 1fr;
+    gap: 12rem;
   }
 }
