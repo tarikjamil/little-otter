@@ -58,3 +58,13 @@
 .navbar--dropdown.is--active .navbar--dropdown-toggle {
   font-weight: 700;
 }
+
+/* ------------ hubspot form ------------ */
+
+.hs-input {
+  height: 48rem;
+  border-width: 0rem;
+  border-radius: 8rem;
+  color: var(--deep-marin--900);
+  background: white;
+}
