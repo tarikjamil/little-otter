@@ -68,3 +68,9 @@
   color: var(--deep-marin--900);
   background: white;
 }
+
+.form-columns-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24rem;
+}
