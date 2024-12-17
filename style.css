@@ -129,6 +129,10 @@ select.hs-input {
   background-image: url("https://cdn.prod.website-files.com/672b9198b6cb729eb016eaee/67617275dbe636262b5d67b0_LO%20Website%20Icons.svg");
   background-position: calc(100% - 11rem) center;
   background-size: 24rem;
+  -webkit-appearance: none; /* Chrome, Safari, Edge */
+  -moz-appearance: none; /* Firefox */
+  appearance: none; /* Standard property */
+  background: none;
 }
 
 .hs-error-msgs {
