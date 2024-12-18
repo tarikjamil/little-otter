@@ -33,14 +33,21 @@
   color: var(--deep-marin--900);
 }
 
+.navbar.is--scrolled
+  [data-wf--navbar--variant="dark"].navbar.is--scrolled
+  .navbar--dropdown-list {
+  color: var(--deep-marin--900);
+  background-color: var(--color--stone);
+}
+
 [data-wf--navbar--variant="dark"].navbar .navbar--dropdown-list {
   background-color: var(--deep-marin--900);
   color: var(--color--white);
 }
 
 [data-wf--navbar--variant="dark"].navbar.is--scrolled .navbar--dropdown-list {
-  color: var(--color--white);
-  background-color: var(--deep-marin--900);
+  color: var(--deep-marin--900);
+  background-color: var(--color--white);
 }
 
 [data-wf--navbar--variant="dark"].navbar.is--scrolled .btn {
