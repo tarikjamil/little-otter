@@ -478,6 +478,24 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
+// --------------------- related resources conditions --------------------- //
+
+document.addEventListener("DOMContentLoaded", () => {
+  // Select all related resource items
+  const relatedResourceItems = document.querySelectorAll(
+    ".related-resource--item"
+  );
+
+  // Loop through each item
+  relatedResourceItems.forEach((item) => {
+    // Check if it contains an element with the class w--current
+    if (item.querySelector(".w--current")) {
+      // Add display: none to the parent item
+      item.style.display = "none";
+    }
+  });
+});
+
 // --------------------- swiper --------------------- //
 
 document.addEventListener("DOMContentLoaded", () => {
