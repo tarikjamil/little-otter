@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Select the richtext container and the element for the summary list
   const richtextContainer = document.querySelector(".richtext.w-richtext");
   const summaryList = document.querySelector(".list--article-points");
+  const articlePins = document.querySelector(".article-pins"); // Select the article-pins element
 
   if (!richtextContainer || !summaryList) {
     console.error("Required elements not found!");
@@ -64,4 +65,9 @@ document.addEventListener("DOMContentLoaded", () => {
     // Append the list item to the summary
     summaryList.appendChild(listItem);
   });
+
+  // Check if the summary list is empty
+  if (summaryList.children.length === 0 && articlePins) {
+    articlePins.style.display = "none";
+  }
 });
