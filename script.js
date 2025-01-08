@@ -380,10 +380,8 @@ document.addEventListener("DOMContentLoaded", function () {
 document.addEventListener("DOMContentLoaded", () => {
   const items = document.querySelectorAll(".howitworks--item");
   const videos = document.querySelectorAll(".hoitworks--svg");
-  const section = document.querySelector(".howitworks-section"); // The section containing the items
   let currentIndex = 0;
   let interval;
-  let isInViewport = false;
 
   // Function to update active video and item
   const updateActive = (index) => {
@@ -408,15 +406,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Set up autoplay loop
   const startAutoplay = () => {
-    if (!interval) {
-      interval = setInterval(playNext, 3000); // 3 seconds per video
-    }
+    interval = setInterval(playNext, 3000); // 3 seconds per video
   };
 
   // Stop autoplay when user interacts
   const stopAutoplay = () => {
     clearInterval(interval);
-    interval = null;
   };
 
   // Add click event to items
@@ -437,29 +432,8 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Initialize the first video
-  const initAutoplay = () => {
-    updateActive(0);
-    startAutoplay();
-  };
-
-  // IntersectionObserver to start/stop autoplay based on viewport visibility
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          isInViewport = true;
-          initAutoplay();
-        } else {
-          isInViewport = false;
-          stopAutoplay();
-        }
-      });
-    },
-    { threshold: 0.5 } // Trigger when 50% of the section is visible
-  );
-
-  // Observe the section
-  observer.observe(section);
+  updateActive(0);
+  startAutoplay();
 });
 
 // --------------------- show more button --------------------- //
