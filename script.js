@@ -380,8 +380,10 @@ document.addEventListener("DOMContentLoaded", function () {
 document.addEventListener("DOMContentLoaded", () => {
   const items = document.querySelectorAll(".howitworks--item");
   const videos = document.querySelectorAll(".hoitworks--svg");
+  const supportSection = document.querySelector(".section.is--support");
   let currentIndex = 0;
   let interval;
+  let isAutoplayActive = false;
 
   // Function to update active video and item
   const updateActive = (index) => {
@@ -406,12 +408,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Set up autoplay loop
   const startAutoplay = () => {
-    interval = setInterval(playNext, 3000); // 3 seconds per video
+    if (!isAutoplayActive) {
+      interval = setInterval(playNext, 3000); // 3 seconds per video
+      isAutoplayActive = true;
+    }
   };
 
-  // Stop autoplay when user interacts
+  // Stop autoplay
   const stopAutoplay = () => {
     clearInterval(interval);
+    isAutoplayActive = false;
   };
 
   // Add click event to items
@@ -433,7 +439,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Initialize the first video
   updateActive(0);
-  startAutoplay();
+
+  // Observe the support section's position
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (
+          entry.isIntersecting &&
+          entry.boundingClientRect.top <= window.innerHeight - 200
+        ) {
+          startAutoplay(); // Start autoplay when conditions are met
+        } else {
+          stopAutoplay(); // Stop autoplay when it goes out of view
+        }
+      });
+    },
+    {
+      root: null, // Viewport as the root
+      threshold: 0, // Trigger as soon as the element enters
+    }
+  );
+
+  // Observe the .section.is--support element
+  if (supportSection) {
+    observer.observe(supportSection);
+  }
 });
 
 // --------------------- show more button --------------------- //
