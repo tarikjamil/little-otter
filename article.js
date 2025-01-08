@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentSection = null;
 
   // Loop through all children to structure content
-  children.forEach((child, index) => {
+  children.forEach((child) => {
     if (child.tagName === "H2") {
       // Close the previous section if any
       if (currentSection) {
@@ -37,6 +37,14 @@ document.addEventListener("DOMContentLoaded", () => {
   // Push the last section if exists
   if (currentSection) {
     sections.push(currentSection);
+  }
+
+  // If no sections found, do not edit the richtext or add summary links
+  if (sections.length === 0) {
+    console.warn(
+      "No H2 elements found. The richtext content will remain unchanged."
+    );
+    return;
   }
 
   // Clear the container to rebuild the structure
