@@ -44,6 +44,14 @@ document.addEventListener("DOMContentLoaded", () => {
     console.warn(
       "No H2 elements found. The richtext content will remain unchanged."
     );
+    if (articlePins) {
+      articlePins.style.display = "none"; // Hide .article-pins when no H2 is found
+      console.log(
+        ".article-pins is now hidden because no H2 elements were found."
+      );
+    } else {
+      console.error(".article-pins element not found!");
+    }
     return;
   }
 
@@ -74,20 +82,8 @@ document.addEventListener("DOMContentLoaded", () => {
     summaryList.appendChild(listItem);
   });
 
-  // Debugging: Log the number of children in the summary list
-  console.log("Number of summary list children:", summaryList.children.length);
-
-  // Check if the summary list is empty
-  if (summaryList.children.length === 0) {
-    console.warn(".list--article-points is empty, hiding .article-pins");
-    if (articlePins) {
-      articlePins.style.display = "none";
-    } else {
-      console.error(".article-pins element not found!");
-    }
-  } else {
-    console.log(
-      ".list--article-points has items, .article-pins will remain visible."
-    );
-  }
+  // Debugging: Log the successful completion of the script
+  console.log(
+    "Script completed successfully. Sections processed and summary list updated."
+  );
 });
