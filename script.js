@@ -420,9 +420,9 @@ document.addEventListener("DOMContentLoaded", () => {
     isAutoplayActive = false;
   };
 
-  // Add click event to items
+  // Add hover event to items
   items.forEach((item, index) => {
-    item.addEventListener("click", () => {
+    item.addEventListener("mouseenter", () => {
       stopAutoplay();
       updateActive(index);
       startAutoplay();
