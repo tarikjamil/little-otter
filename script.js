@@ -395,16 +395,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
     visuals.forEach((visual, i) => {
       if (i === index) {
-        visual.style.display = "block"; // Show the current visual
-        if (visual.tagName === "VIDEO") {
+        if (visual.tagName === "IMG") {
+          visual.classList.add("is--active"); // Apply easing for images
+        } else if (visual.tagName === "VIDEO") {
+          visual.style.display = "block"; // Show the current video
           visual.currentTime = 0; // Reset the video
           visual.play();
         }
       } else {
-        if (visual.tagName === "VIDEO") {
+        if (visual.tagName === "IMG") {
+          visual.classList.remove("is--active"); // Remove easing for inactive images
+        } else if (visual.tagName === "VIDEO") {
           visual.pause(); // Pause non-active videos
+          visual.style.display = "none"; // Hide non-active videos
         }
-        visual.style.display = "none"; // Hide non-active visuals
       }
     });
 

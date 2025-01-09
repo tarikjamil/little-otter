@@ -94,6 +94,16 @@
   font-weight: 700;
 }
 
+.images-parent img {
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  opacity: 0;
+  display: block; /* Ensure images are block elements */
+}
+
+.images-parent img.is--active {
+  opacity: 1;
+}
+
 /* ------------ hubspot form ------------ */
 
 .input {
