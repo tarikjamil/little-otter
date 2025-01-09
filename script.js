@@ -379,37 +379,48 @@ document.addEventListener("DOMContentLoaded", function () {
 
 document.addEventListener("DOMContentLoaded", () => {
   const items = document.querySelectorAll(".howitworks--item");
-  const videos = document.querySelectorAll(".hoitworks--svg");
+  const visuals = document.querySelectorAll(
+    ".images-parent img, .hoitworks--svg video"
+  );
   const supportSection = document.querySelector(".section.is--support");
   let currentIndex = 0;
   let interval;
   let isAutoplayActive = false;
 
-  // Function to update active video and item
+  // Function to update active visual and item
   const updateActive = (index) => {
     items.forEach((item, i) => {
       item.classList.toggle("is--active", i === index);
     });
-    videos.forEach((video, i) => {
-      video.style.display = i === index ? "block" : "none";
-    });
-    currentIndex = index;
 
-    const currentVideo = videos[currentIndex].querySelector("video");
-    currentVideo.currentTime = 0; // Reset the video
-    currentVideo.play();
+    visuals.forEach((visual, i) => {
+      if (i === index) {
+        visual.style.display = "block"; // Show the current visual
+        if (visual.tagName === "VIDEO") {
+          visual.currentTime = 0; // Reset the video
+          visual.play();
+        }
+      } else {
+        if (visual.tagName === "VIDEO") {
+          visual.pause(); // Pause non-active videos
+        }
+        visual.style.display = "none"; // Hide non-active visuals
+      }
+    });
+
+    currentIndex = index;
   };
 
-  // Function to play the next video
+  // Function to play the next visual
   const playNext = () => {
-    const nextIndex = (currentIndex + 1) % videos.length; // Loop back to the first video
+    const nextIndex = (currentIndex + 1) % visuals.length; // Loop back to the first visual
     updateActive(nextIndex);
   };
 
   // Set up autoplay loop
   const startAutoplay = () => {
     if (!isAutoplayActive) {
-      interval = setInterval(playNext, 3000); // 3 seconds per video
+      interval = setInterval(playNext, 3000); // 3 seconds per visual
       isAutoplayActive = true;
     }
   };
@@ -430,14 +441,15 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Add event listeners for video end
-  videos.forEach((video, index) => {
-    const videoElement = video.querySelector("video");
-    videoElement.addEventListener("ended", () => {
-      playNext();
-    });
+  visuals.forEach((visual, index) => {
+    if (visual.tagName === "VIDEO") {
+      visual.addEventListener("ended", () => {
+        playNext();
+      });
+    }
   });
 
-  // Initialize the first video
+  // Initialize the first visual
   updateActive(0);
 
   // Observe the support section's position
