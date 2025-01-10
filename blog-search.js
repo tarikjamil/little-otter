@@ -16,11 +16,11 @@ document.addEventListener("DOMContentLoaded", function () {
   // Fetch items from a single page
   async function fetchPageContent(pageNumber) {
     try {
-      console.log(`Fetching page /cms-items/page-${pageNumber}`);
-      const response = await fetch(`/cms-items/page-${pageNumber}`);
+      console.log(`Fetching page /blog-items/page-${pageNumber}`);
+      const response = await fetch(`/blog-items/page-${pageNumber}`);
       if (!response.ok) {
         throw new Error(
-          `Failed to load page /cms-items/page-${pageNumber}: ${response.status}`
+          `Failed to load page /blog-items/page-${pageNumber}: ${response.status}`
         );
       }
       const pageContent = await response.text();
@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", function () {
       return Array.from(doc.querySelectorAll(".cms-item"));
     } catch (error) {
       console.error(
-        `Error fetching page /cms-items/page-${pageNumber}:`,
+        `Error fetching page /blog-items/page-${pageNumber}:`,
         error
       );
       return [];
