@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", async function () {
   const totalPages = 5; // Adjust to the actual number of pages
-  const itemsPerPage = 4;
+  const itemsPerPage = 10;
   const cmsContainer = document.getElementById("cms-container");
   const paginationContainer = document.getElementById("pagination");
   const loadingIndicator = document.getElementById("loading-indicator");
@@ -88,6 +88,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         loadingIndicator.textContent = "No items found.";
       }
 
+      initializeFiltersAndSorting();
       renderPage();
     } catch (error) {
       console.error("Error loading all pages:", error);
@@ -150,6 +151,102 @@ document.addEventListener("DOMContentLoaded", async function () {
       });
       paginationContainer.appendChild(nextButton);
     }
+  }
+
+  // Initialize filters and sorting
+  function initializeFiltersAndSorting() {
+    console.log("Initializing filters and sorting...");
+    const filterByTagRadios = document.querySelectorAll(
+      ".filters--accordion:nth-child(1) .filter--radio"
+    );
+    const filterByParentRadios = document.querySelectorAll(
+      ".filters--accordion:nth-child(2) .filter--radio"
+    );
+    const sortOptions = document.querySelectorAll(
+      ".filters--accordion:nth-child(3) a"
+    );
+
+    let activeTagFilter = null;
+    let activeParentFilter = null;
+    let activeSortOrder = "asc";
+
+    function applyFiltersAndSort() {
+      console.log("Applying filters and sorting...");
+      cmsItems.forEach((item) => {
+        const tags = Array.from(item.querySelectorAll(".tag--item")).map(
+          (tag) => tag.textContent.trim()
+        );
+        const parents = Array.from(
+          item.querySelectorAll(".categories-parents")
+        ).map((parent) => parent.textContent.trim());
+
+        const matchesTagFilter =
+          !activeTagFilter || tags.includes(activeTagFilter);
+        const matchesParentFilter =
+          !activeParentFilter ||
+          parents.some((parent) => parent.includes(activeParentFilter));
+
+        // Show or hide the item based on the filters
+        if (matchesTagFilter && matchesParentFilter) {
+          item.style.display = "block";
+        } else {
+          item.style.display = "none";
+        }
+      });
+
+      sortCmsItems();
+    }
+
+    function sortCmsItems() {
+      console.log("Sorting items...");
+      const container = document.querySelector("#cms-container");
+      const visibleItems = Array.from(cmsItems).filter(
+        (item) => item.style.display !== "none"
+      );
+
+      visibleItems.sort((a, b) => {
+        const aH4 = a.querySelector("h4");
+        const bH4 = b.querySelector("h4");
+
+        const aText = aH4 ? aH4.textContent.trim().toLowerCase() : "";
+        const bText = bH4 ? bH4.textContent.trim().toLowerCase() : "";
+
+        return activeSortOrder === "asc"
+          ? aText.localeCompare(bText)
+          : bText.localeCompare(aText);
+      });
+
+      visibleItems.forEach((item) => container.appendChild(item));
+    }
+
+    filterByTagRadios.forEach((radio) => {
+      radio.addEventListener("click", () => {
+        const label = radio.querySelector(".w-form-label").textContent.trim();
+        activeTagFilter = label === activeTagFilter ? null : label; // Toggle filter
+        applyFiltersAndSort();
+      });
+    });
+
+    filterByParentRadios.forEach((radio) => {
+      radio.addEventListener("click", () => {
+        const label = radio.querySelector(".w-form-label").textContent.trim();
+        activeParentFilter = label === activeParentFilter ? null : label; // Toggle filter
+        applyFiltersAndSort();
+      });
+    });
+
+    sortOptions.forEach((option) => {
+      option.addEventListener("click", (event) => {
+        event.preventDefault();
+        activeSortOrder =
+          option.querySelector(".filter--text").textContent.trim() === "A-Z"
+            ? "asc"
+            : "desc";
+        applyFiltersAndSort();
+      });
+    });
+
+    applyFiltersAndSort();
   }
 
   // Start the process
