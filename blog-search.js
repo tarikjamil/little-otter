@@ -152,17 +152,40 @@ document.addEventListener("DOMContentLoaded", function () {
     const totalPages = Math.ceil(totalItems / itemsPerPage);
     paginationContainer.innerHTML = ""; // Clear existing controls
 
-    for (let i = 1; i <= totalPages; i++) {
-      const button = document.createElement("button");
-      button.textContent = i;
-      button.classList.add("pagination--btn");
-      if (i === currentPage) button.classList.add("is--active");
-      button.addEventListener("click", () => {
-        currentPage = i;
+    // Create "Previous" button
+    const prevButton = document.createElement("a");
+    prevButton.setAttribute("aria-label", "Previous Page");
+    prevButton.className = "w-pagination-previous pagination--btn";
+    prevButton.innerHTML = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 16 16" fill="none" class="icon--16 is--reverse">
+      <path d="M2.64555 7.33268H10.7962L7.05241 3.60602L8.00344 2.66602L13.3613 7.99935L8.00344 13.3327L7.05911 12.3927L10.7962 8.66602H2.64555V7.33268Z" fill="currentColor"></path>
+    </svg>`;
+    prevButton.style.cursor = currentPage > 1 ? "pointer" : "not-allowed";
+    prevButton.addEventListener("click", () => {
+      if (currentPage > 1) {
+        currentPage--;
         renderPage();
-      });
-      paginationContainer.appendChild(button);
-    }
+      }
+    });
+    paginationContainer.appendChild(prevButton);
+
+    // Create "Next" button
+    const nextButton = document.createElement("a");
+    nextButton.setAttribute("aria-label", "Next Page");
+    nextButton.className = "w-pagination-next pagination--btn";
+    nextButton.innerHTML = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 16 16" fill="none" class="icon--16">
+      <path d="M2.64555 7.33268H10.7962L7.05241 3.60602L8.00344 2.66602L13.3613 7.99935L8.00344 13.3327L7.05911 12.3927L10.7962 8.66602H2.64555V7.33268Z" fill="currentColor"></path>
+    </svg>`;
+    nextButton.style.cursor =
+      currentPage < totalPages ? "pointer" : "not-allowed";
+    nextButton.addEventListener("click", () => {
+      if (currentPage < totalPages) {
+        currentPage++;
+        renderPage();
+      }
+    });
+    paginationContainer.appendChild(nextButton);
   }
 
   // Main function to initialize the script
