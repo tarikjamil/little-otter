@@ -1,10 +1,10 @@
 document.addEventListener("DOMContentLoaded", async function () {
-  const totalPages = 5; // Update to the actual number of pages
+  const totalPages = 5; // Adjust to your needs
   const itemsPerPage = 10;
   const cmsContainer = document.getElementById("cms-container");
   const paginationContainer = document.getElementById("pagination");
   const loadingIndicator = document.getElementById("loading-indicator");
-  let cmsItems = []; // Store all items
+  let cmsItems = []; // Store all loaded items
   let currentPage = 1;
 
   if (!cmsContainer || !loadingIndicator) {
@@ -12,27 +12,33 @@ document.addEventListener("DOMContentLoaded", async function () {
     return;
   }
 
+  console.log("Starting script...");
+
   // Fetch items from a single page
   async function fetchPageContent(pageNumber) {
     try {
+      console.log(`Fetching page: /blog-items/page-${pageNumber}`);
       const response = await fetch(`/blog-items/page-${pageNumber}`);
       if (!response.ok) {
-        throw new Error(`Failed to load page: ${response.status}`);
+        throw new Error(`Failed to fetch page: ${response.status}`);
       }
       const pageContent = await response.text();
       const parser = new DOMParser();
       const doc = parser.parseFromString(pageContent, "text/html");
-      return Array.from(doc.querySelectorAll(".cms-item"));
+      const items = Array.from(doc.querySelectorAll(".cms-item"));
+      console.log(`Fetched ${items.length} items from page ${pageNumber}`);
+      return items;
     } catch (error) {
       console.error(`Error fetching page ${pageNumber}:`, error);
       return [];
     }
   }
 
-  // Load all pages and initialize
+  // Load all pages
   async function loadAllPages() {
     try {
-      loadingIndicator.style.display = "block"; // Show loading indicator
+      console.log("Loading all pages...");
+      loadingIndicator.style.display = "block";
 
       for (let i = 1; i <= totalPages; i++) {
         const items = await fetchPageContent(i);
@@ -40,20 +46,27 @@ document.addEventListener("DOMContentLoaded", async function () {
           console.warn(`No items found on page ${i}`);
         }
         cmsItems.push(...items);
-        items.forEach((item) => cmsContainer.appendChild(item)); // Append to DOM
+        items.forEach((item) => cmsContainer.appendChild(item));
       }
 
-      loadingIndicator.style.display = "none"; // Hide loading indicator
+      console.log(`Total items loaded: ${cmsItems.length}`);
+      loadingIndicator.style.display = "none";
+
+      if (cmsItems.length === 0) {
+        loadingIndicator.textContent = "No items found.";
+      }
+
       initializeFiltersAndSorting();
       renderPage();
     } catch (error) {
-      console.error("Error loading pages:", error);
+      console.error("Error loading all pages:", error);
       loadingIndicator.textContent = "Failed to load content.";
     }
   }
 
   // Render current page of items
   function renderPage() {
+    console.log(`Rendering page ${currentPage}`);
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
 
@@ -66,11 +79,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   // Render pagination controls
   function renderPaginationControls() {
+    console.log("Rendering pagination controls...");
     const totalItems = cmsItems.length;
     const totalPages = Math.ceil(totalItems / itemsPerPage);
     paginationContainer.innerHTML = "";
 
-    // Previous button
     if (currentPage > 1) {
       const prevButton = document.createElement("a");
       prevButton.textContent = "Previous";
@@ -82,7 +95,6 @@ document.addEventListener("DOMContentLoaded", async function () {
       paginationContainer.appendChild(prevButton);
     }
 
-    // Next button
     if (currentPage < totalPages) {
       const nextButton = document.createElement("a");
       nextButton.textContent = "Next";
@@ -97,6 +109,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   // Initialize filters and sorting
   function initializeFiltersAndSorting() {
+    console.log("Initializing filters and sorting...");
     const filterByTagRadios = document.querySelectorAll(
       ".filters--accordion:nth-child(1) .filter--radio"
     );
@@ -107,11 +120,16 @@ document.addEventListener("DOMContentLoaded", async function () {
       ".filters--accordion:nth-child(3) a"
     );
 
+    if (!filterByTagRadios.length || !filterByParentRadios.length) {
+      console.warn("No filters found in the DOM.");
+    }
+
     let activeTagFilter = null;
     let activeParentFilter = null;
     let activeSortOrder = "asc";
 
     function applyFiltersAndSort() {
+      console.log("Applying filters and sorting...");
       cmsItems.forEach((item) => {
         const tags = Array.from(item.querySelectorAll(".tag--item")).map(
           (tag) => tag.textContent.trim()
@@ -133,14 +151,19 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 
     function sortCmsItems() {
+      console.log("Sorting items...");
       const container = document.querySelector("#cms-container");
       const visibleItems = Array.from(cmsItems).filter(
         (item) => item.style.display !== "none"
       );
 
       visibleItems.sort((a, b) => {
-        const aText = a.querySelector("h4").textContent.trim().toLowerCase();
-        const bText = b.querySelector("h4").textContent.trim().toLowerCase();
+        const aH4 = a.querySelector("h4");
+        const bH4 = b.querySelector("h4");
+
+        const aText = aH4 ? aH4.textContent.trim().toLowerCase() : "";
+        const bText = bH4 ? bH4.textContent.trim().toLowerCase() : "";
+
         return activeSortOrder === "asc"
           ? aText.localeCompare(bText)
           : bText.localeCompare(aText);
@@ -179,6 +202,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     applyFiltersAndSort();
   }
 
-  // Start loading all pages
+  // Start the process
   await loadAllPages();
 });
