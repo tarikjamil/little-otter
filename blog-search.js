@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
   const totalPages = 5; // Adjust this to the actual number of pages
-  const itemsPerPage = 10; // Items per page
+  const itemsPerPage = 4; // Items per page
   const cmsContainer = document.getElementById("cms-container");
   const noResultsMessage = document.getElementById("no-results-message");
   const countElement = document.getElementById("count");
