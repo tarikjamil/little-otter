@@ -375,6 +375,51 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
+// --------------------- announcement bar --------------------- //
+// Function to set a cookie
+function setCookie(name, value, hours) {
+  const date = new Date();
+  date.setTime(date.getTime() + hours * 60 * 60 * 1000); // Convert hours to milliseconds
+  document.cookie = `${name}=${value}; expires=${date.toUTCString()}; path=/`;
+}
+
+// Function to get a cookie
+function getCookie(name) {
+  const cookies = document.cookie.split("; ");
+  for (let i = 0; i < cookies.length; i++) {
+    const cookie = cookies[i].split("=");
+    if (cookie[0] === name) {
+      return cookie[1];
+    }
+  }
+  return null;
+}
+
+// Check cookie on page load
+window.addEventListener("DOMContentLoaded", () => {
+  if (getCookie("announcementClosed") === "true") {
+    document.querySelector(".announcement--parent").style.display = "none";
+  }
+});
+
+// Close announcement on click
+document.querySelector(".announcement-close").addEventListener("click", () => {
+  const parent = document.querySelector(".announcement--parent");
+
+  // Animate height to 0px
+  gsap.to(parent, {
+    height: 0,
+    duration: 0.5,
+    onComplete: () => {
+      // Set display: none after animation
+      parent.style.display = "none";
+
+      // Set cookie to remember the choice for 48 hours
+      setCookie("announcementClosed", "true", 48);
+    },
+  });
+});
+
 // --------------------- how it works accordion --------------------- //
 
 document.addEventListener("DOMContentLoaded", () => {
