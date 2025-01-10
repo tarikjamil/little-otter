@@ -593,10 +593,10 @@ document.addEventListener("DOMContentLoaded", () => {
   console.log("DOM fully loaded and parsed.");
 
   const carousel4 = document.querySelectorAll(".is--testimonials-slider");
-  const swiperArrows = carousel4.parentElement.querySelector(".swiper-arrows");
 
   carousel4.forEach((swiperEl) => {
     console.log("Initializing Swiper for element:", swiperEl);
+    const swiperArrows = swiperEl.parentElement.querySelector(".swiper-arrows"); // Locate the sibling .swiper-arrows
 
     const swiperInstance = new Swiper(swiperEl, {
       slidesPerView: 1,
