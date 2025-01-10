@@ -183,16 +183,19 @@ document.addEventListener("DOMContentLoaded", async function () {
         console.log("Item Tags:", tags);
         console.log("Item Parents:", parents);
 
+        // Check if the item matches the active filters
         const matchesTagFilter =
-          !activeTagFilter || tags.includes(activeTagFilter);
+          !activeTagFilter ||
+          (tags.length > 0 && tags.includes(activeTagFilter));
         const matchesParentFilter =
           !activeParentFilter ||
-          parents.some((parent) => parent.includes(activeParentFilter));
+          (parents.length > 0 &&
+            parents.some((parent) => parent.includes(activeParentFilter)));
 
         console.log("Matches Tag Filter:", matchesTagFilter);
         console.log("Matches Parent Filter:", matchesParentFilter);
 
-        // Show or hide the item based on the filters
+        // Hide items that don't match filters
         if (matchesTagFilter && matchesParentFilter) {
           item.style.display = "block";
         } else {
