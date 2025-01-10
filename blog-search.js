@@ -36,7 +36,32 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // Load all pages and store CMS items
+  // Fetch additional data for each CMS item
+  async function fetchAdditionalData(cmsItem) {
+    const link = cmsItem.querySelector("a").href; // Assuming the item contains a link
+    try {
+      console.log(`Fetching article categories from: ${link}`);
+      const response = await fetch(link);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch ${link}: ${response.status}`);
+      }
+      const pageContent = await response.text();
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(pageContent, "text/html");
+      const categories = doc.querySelector(".article--categories-list");
+
+      if (categories) {
+        const categoriesParent = cmsItem.querySelector(".categories-parents");
+        if (categoriesParent) {
+          categoriesParent.innerHTML = categories.innerHTML; // Append fetched content
+        }
+      }
+    } catch (error) {
+      console.error(`Error fetching additional data for ${link}:`, error);
+    }
+  }
+
+  // Load all pages and fetch additional data
   async function loadAllPages() {
     for (let i = 1; i <= totalPages; i++) {
       const items = await fetchPageContent(i);
@@ -45,6 +70,10 @@ document.addEventListener("DOMContentLoaded", function () {
         cmsContainer.appendChild(item); // Append items to the container
       });
     }
+
+    // Fetch additional data for each item
+    await Promise.all(cmsItems.map(fetchAdditionalData));
+
     filteredItems = [...cmsItems]; // Start with all items
   }
 
@@ -147,7 +176,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     console.log("Loading all CMS pages...");
     await loadAllPages();
-    console.log("All pages loaded.");
+    console.log("All pages loaded and categories appended.");
 
     // Pre-fill search input from URL query
     if (searchInput) {
