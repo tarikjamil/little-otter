@@ -1,233 +1,175 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const totalPages = 5; // Adjust this to the actual number of pages
-  const itemsPerPage = 4; // Items per page
+  const totalPages = 5; // Adjust based on actual number of pages
+  const itemsPerPage = 10; // Items per page
   const cmsContainer = document.getElementById("cms-container");
-  const noResultsMessage = document.getElementById("no-results-message");
-  const countElement = document.getElementById("count");
-  const loadingIndicator = document.getElementById("loading-indicator");
-  const searchInput = document.getElementById("search-bar");
-  const sortDropdown = document.getElementById("sort-dropdown");
   const paginationContainer = document.getElementById("pagination");
-
-  let cmsItems = []; // Store all CMS items
-  let filteredItems = []; // Filtered items after search/sort
-  let currentPage = 1; // Current page index
+  let cmsItems = []; // Store all loaded CMS items
+  let currentPage = 1;
 
   // Fetch items from a single page
   async function fetchPageContent(pageNumber) {
     try {
-      console.log(`Fetching page /blog-items/page-${pageNumber}`);
       const response = await fetch(`/blog-items/page-${pageNumber}`);
       if (!response.ok) {
-        throw new Error(
-          `Failed to load page /blog-items/page-${pageNumber}: ${response.status}`
-        );
+        throw new Error(`Failed to load page: ${response.status}`);
       }
       const pageContent = await response.text();
       const parser = new DOMParser();
       const doc = parser.parseFromString(pageContent, "text/html");
       return Array.from(doc.querySelectorAll(".cms-item"));
     } catch (error) {
-      console.error(
-        `Error fetching page /blog-items/page-${pageNumber}:`,
-        error
-      );
+      console.error(`Error fetching page ${pageNumber}:`, error);
       return [];
     }
   }
 
-  // Fetch additional data for each CMS item
-  async function fetchAdditionalData(cmsItem) {
-    const link = cmsItem.querySelector("a").href; // Assuming the item contains a link
-    try {
-      console.log(`Fetching article categories from: ${link}`);
-      const response = await fetch(link);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch ${link}: ${response.status}`);
-      }
-      const pageContent = await response.text();
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(pageContent, "text/html");
-      const categories = doc.querySelector(".article--categories-list");
-
-      if (categories) {
-        const categoriesParent = cmsItem.querySelector(".categories-parents");
-        if (categoriesParent) {
-          categoriesParent.innerHTML = categories.innerHTML; // Append fetched content
-        }
-      }
-    } catch (error) {
-      console.error(`Error fetching additional data for ${link}:`, error);
-    }
-  }
-
-  // Load all pages and fetch additional data
+  // Load all pages and initialize items
   async function loadAllPages() {
     for (let i = 1; i <= totalPages; i++) {
       const items = await fetchPageContent(i);
       cmsItems.push(...items);
-      items.forEach((item) => {
-        cmsContainer.appendChild(item); // Append items to the container
-      });
+      items.forEach((item) => cmsContainer.appendChild(item));
     }
-
-    // Fetch additional data for each item
-    await Promise.all(cmsItems.map(fetchAdditionalData));
-
-    filteredItems = [...cmsItems]; // Start with all items
-  }
-
-  // Apply filters based on the search query
-  function applyFilters() {
-    const queryFromURL =
-      new URLSearchParams(window.location.search).get("query") || "";
-    const searchQuery = searchInput
-      ? searchInput.value.toLowerCase() || queryFromURL.toLowerCase()
-      : queryFromURL.toLowerCase();
-
-    console.log("Search Query:", searchQuery);
-
-    filteredItems = cmsItems.filter((item) => {
-      const content = item.textContent.toLowerCase();
-      return content.includes(searchQuery);
-    });
-
-    applySorting(); // Sort the filtered items
-    updateCount(); // Update the count
-    currentPage = 1; // Reset to first page
-    renderPage(); // Render the first page
-  }
-
-  // Sort the filtered items
-  function applySorting() {
-    const sortOrder = sortDropdown ? sortDropdown.value : "asc";
-
-    filteredItems.sort((a, b) => {
-      const aText = a.textContent.toLowerCase();
-      const bText = b.textContent.toLowerCase();
-      return sortOrder === "asc"
-        ? aText.localeCompare(bText)
-        : bText.localeCompare(aText);
-    });
+    initializeFiltersAndSorting();
   }
 
   // Render the current page of items
   function renderPage() {
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
-    const itemsToShow = filteredItems.slice(start, end);
+    const itemsToShow = cmsItems.slice(start, end);
 
     cmsItems.forEach((item) => {
-      // Hide all items initially
-      item.style.display = "none";
-      item.style.opacity = "0";
-      item.style.transform = "translateY(20px)";
+      item.style.display = "none"; // Hide all items
     });
 
-    itemsToShow.forEach((item, index) => {
-      // Show and animate visible items
-      item.style.display = "block";
-      setTimeout(() => {
-        item.style.opacity = "1";
-        item.style.transform = "translateY(0)";
-      }, index * 20); // Stagger animations
+    itemsToShow.forEach((item) => {
+      item.style.display = "block"; // Show items for the current page
     });
 
-    renderPaginationControls(filteredItems.length);
-  }
-
-  // Update the count of visible items
-  function updateCount() {
-    if (countElement) {
-      countElement.textContent = filteredItems.length;
-    }
-    if (noResultsMessage) {
-      noResultsMessage.style.display =
-        filteredItems.length > 0 ? "none" : "block";
-    }
+    renderPaginationControls();
   }
 
   // Render pagination controls
-  function renderPaginationControls(totalItems) {
+  function renderPaginationControls() {
+    const totalItems = cmsItems.length;
     const totalPages = Math.ceil(totalItems / itemsPerPage);
-    paginationContainer.innerHTML = ""; // Clear existing controls
+    paginationContainer.innerHTML = "";
 
-    // Create "Previous" button
-    const prevButton = document.createElement("a");
-    prevButton.setAttribute("aria-label", "Previous Page");
-    prevButton.className = "w-pagination-previous pagination--btn";
-    prevButton.innerHTML = `
-    <svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 16 16" fill="none" class="icon--16 is--reverse">
-      <path d="M2.64555 7.33268H10.7962L7.05241 3.60602L8.00344 2.66602L13.3613 7.99935L8.00344 13.3327L7.05911 12.3927L10.7962 8.66602H2.64555V7.33268Z" fill="currentColor"></path>
-    </svg>`;
-    prevButton.style.cursor = currentPage > 1 ? "pointer" : "not-allowed";
-    prevButton.addEventListener("click", () => {
-      if (currentPage > 1) {
+    if (currentPage > 1) {
+      const prevButton = document.createElement("a");
+      prevButton.textContent = "Previous";
+      prevButton.className = "w-pagination-previous pagination--btn";
+      prevButton.addEventListener("click", () => {
         currentPage--;
         renderPage();
-      }
-    });
-    paginationContainer.appendChild(prevButton);
+      });
+      paginationContainer.appendChild(prevButton);
+    }
 
-    // Create "Next" button
-    const nextButton = document.createElement("a");
-    nextButton.setAttribute("aria-label", "Next Page");
-    nextButton.className = "w-pagination-next pagination--btn";
-    nextButton.innerHTML = `
-    <svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 16 16" fill="none" class="icon--16">
-      <path d="M2.64555 7.33268H10.7962L7.05241 3.60602L8.00344 2.66602L13.3613 7.99935L8.00344 13.3327L7.05911 12.3927L10.7962 8.66602H2.64555V7.33268Z" fill="currentColor"></path>
-    </svg>`;
-    nextButton.style.cursor =
-      currentPage < totalPages ? "pointer" : "not-allowed";
-    nextButton.addEventListener("click", () => {
-      if (currentPage < totalPages) {
+    if (currentPage < totalPages) {
+      const nextButton = document.createElement("a");
+      nextButton.textContent = "Next";
+      nextButton.className = "w-pagination-next pagination--btn";
+      nextButton.addEventListener("click", () => {
         currentPage++;
         renderPage();
-      }
-    });
-    paginationContainer.appendChild(nextButton);
-  }
-
-  // Main function to initialize the script
-  async function main() {
-    if (!cmsContainer) {
-      console.error("CMS container not found");
-      return;
-    }
-
-    cmsContainer.style.visibility = "hidden";
-
-    console.log("Loading all CMS pages...");
-    await loadAllPages();
-    console.log("All pages loaded and categories appended.");
-
-    // Pre-fill search input from URL query
-    if (searchInput) {
-      const params = new URLSearchParams(window.location.search);
-      const queryFromURL = params.get("query") || "";
-      searchInput.value = queryFromURL;
-    }
-
-    applyFilters(); // Apply initial filters
-
-    if (loadingIndicator) {
-      loadingIndicator.style.display = "none";
-    }
-
-    cmsContainer.style.visibility = "visible";
-
-    // Add event listeners for real-time filtering and sorting
-    if (searchInput) {
-      searchInput.addEventListener("input", applyFilters);
-    }
-
-    if (sortDropdown) {
-      sortDropdown.addEventListener("change", () => {
-        applySorting();
-        renderPage();
       });
+      paginationContainer.appendChild(nextButton);
     }
   }
 
-  main();
+  // Initialize filtering and sorting logic
+  function initializeFiltersAndSorting() {
+    const filterByTagRadios = document.querySelectorAll(
+      ".filters--accordion:nth-child(1) .filter--radio"
+    );
+    const filterByParentRadios = document.querySelectorAll(
+      ".filters--accordion:nth-child(2) .filter--radio"
+    );
+    const sortOptions = document.querySelectorAll(
+      ".filters--accordion:nth-child(3) a"
+    );
+
+    let activeTagFilter = null;
+    let activeParentFilter = null;
+    let activeSortOrder = "asc";
+
+    // Apply the current filters and sort
+    function applyFiltersAndSort() {
+      cmsItems.forEach((item) => {
+        const tags = Array.from(item.querySelectorAll(".tag--item")).map(
+          (tag) => tag.textContent.trim()
+        );
+        const parents = Array.from(item.querySelectorAll(".tags--parents")).map(
+          (parent) => parent.textContent.trim()
+        );
+
+        const matchesTagFilter =
+          !activeTagFilter || tags.includes(activeTagFilter);
+        const matchesParentFilter =
+          !activeParentFilter || parents.includes(activeParentFilter);
+
+        if (matchesTagFilter && matchesParentFilter) {
+          item.style.display = "block";
+        } else {
+          item.style.display = "none";
+        }
+      });
+
+      sortCmsItems();
+    }
+
+    // Sort the CMS items
+    function sortCmsItems() {
+      const container = document.querySelector("#cms-container");
+      const itemsArray = Array.from(cmsItems).filter(
+        (item) => item.style.display !== "none"
+      );
+
+      itemsArray.sort((a, b) => {
+        const aText = a.querySelector("h4").textContent.trim().toLowerCase();
+        const bText = b.querySelector("h4").textContent.trim().toLowerCase();
+
+        return activeSortOrder === "asc"
+          ? aText.localeCompare(bText)
+          : bText.localeCompare(aText);
+      });
+
+      itemsArray.forEach((item) => container.appendChild(item));
+    }
+
+    // Add event listeners
+    filterByTagRadios.forEach((radio) => {
+      radio.addEventListener("click", () => {
+        const label = radio.querySelector(".w-form-label").textContent.trim();
+        activeTagFilter = label === activeTagFilter ? null : label; // Toggle filter
+        applyFiltersAndSort();
+      });
+    });
+
+    filterByParentRadios.forEach((radio) => {
+      radio.addEventListener("click", () => {
+        const label = radio.querySelector(".w-form-label").textContent.trim();
+        activeParentFilter = label === activeParentFilter ? null : label; // Toggle filter
+        applyFiltersAndSort();
+      });
+    });
+
+    sortOptions.forEach((option) => {
+      option.addEventListener("click", (event) => {
+        event.preventDefault();
+        activeSortOrder =
+          option.querySelector(".filter--text").textContent.trim() === "A-Z"
+            ? "asc"
+            : "desc";
+        applyFiltersAndSort();
+      });
+    });
+
+    applyFiltersAndSort();
+  }
+
+  // Load all items and initialize
+  loadAllPages();
 });
