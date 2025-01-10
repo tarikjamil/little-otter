@@ -71,7 +71,21 @@ document.addEventListener("DOMContentLoaded", async function () {
     const end = start + itemsPerPage;
 
     cmsItems.forEach((item, index) => {
-      item.style.display = index >= start && index < end ? "block" : "none";
+      if (index >= start && index < end) {
+        // Make items visible with animation
+        item.style.display = "block";
+        setTimeout(() => {
+          item.style.opacity = "1";
+          item.style.transform = "translateY(0)";
+        }, index * 50); // Staggered animation (50ms per item)
+      } else {
+        // Hide items outside the current page
+        item.style.opacity = "0";
+        item.style.transform = "translateY(20rem)";
+        setTimeout(() => {
+          item.style.display = "none";
+        }, 300); // Allow time for animation to complete
+      }
     });
 
     renderPaginationControls();
