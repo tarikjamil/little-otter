@@ -180,11 +180,17 @@ document.addEventListener("DOMContentLoaded", async function () {
           item.querySelectorAll(".categories-parents")
         ).map((parent) => parent.textContent.trim());
 
+        console.log("Item Tags:", tags);
+        console.log("Item Parents:", parents);
+
         const matchesTagFilter =
           !activeTagFilter || tags.includes(activeTagFilter);
         const matchesParentFilter =
           !activeParentFilter ||
           parents.some((parent) => parent.includes(activeParentFilter));
+
+        console.log("Matches Tag Filter:", matchesTagFilter);
+        console.log("Matches Parent Filter:", matchesParentFilter);
 
         // Show or hide the item based on the filters
         if (matchesTagFilter && matchesParentFilter) {
