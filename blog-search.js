@@ -173,6 +173,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     function applyFiltersAndSort() {
       console.log("Applying filters and sorting...");
       cmsItems.forEach((item) => {
+        // Fetch tags and parent categories
         const tags = Array.from(item.querySelectorAll(".tag--item")).map(
           (tag) => tag.textContent.trim()
         );
@@ -183,7 +184,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         console.log("Item Tags:", tags);
         console.log("Item Parents:", parents);
 
-        // Check if the item matches the active filters
+        // Determine if the item matches the active filters
         const matchesTagFilter =
           !activeTagFilter ||
           (tags.length > 0 && tags.includes(activeTagFilter));
@@ -195,14 +196,15 @@ document.addEventListener("DOMContentLoaded", async function () {
         console.log("Matches Tag Filter:", matchesTagFilter);
         console.log("Matches Parent Filter:", matchesParentFilter);
 
-        // Hide items that don't match filters
+        // Show or hide items based on filter matches
         if (matchesTagFilter && matchesParentFilter) {
-          item.style.display = "block";
+          item.style.display = "block"; // Show matching items
         } else {
-          item.style.display = "none";
+          item.style.display = "none"; // Hide non-matching items
         }
       });
 
+      // Apply sorting to visible items
       sortCmsItems();
     }
 
@@ -232,6 +234,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       radio.addEventListener("click", () => {
         const label = radio.querySelector(".w-form-label").textContent.trim();
         activeTagFilter = label === activeTagFilter ? null : label; // Toggle filter
+        console.log("Active Tag Filter:", activeTagFilter); // Debug active tag filter
         applyFiltersAndSort();
       });
     });
@@ -240,6 +243,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       radio.addEventListener("click", () => {
         const label = radio.querySelector(".w-form-label").textContent.trim();
         activeParentFilter = label === activeParentFilter ? null : label; // Toggle filter
+        console.log("Active Parent Filter:", activeParentFilter); // Debug active parent filter
         applyFiltersAndSort();
       });
     });
