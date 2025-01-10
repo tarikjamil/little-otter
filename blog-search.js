@@ -172,19 +172,22 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     function applyFiltersAndSort() {
       console.log("Applying filters and sorting...");
+
       cmsItems.forEach((item) => {
-        // Fetch tags and parent categories
-        const tags = Array.from(item.querySelectorAll(".tag--item")).map(
-          (tag) => tag.textContent.trim()
-        );
+        // Extract tags from `.categories-parents .tag--item`
+        const tags = Array.from(
+          item.querySelectorAll(".categories-parents .tag--item")
+        ).map((tag) => tag.textContent.trim());
+
+        // Extract parent tags from `.tags--parents [fs-cmsfilter-field="tag"]`
         const parents = Array.from(
-          item.querySelectorAll(".categories-parents")
+          item.querySelectorAll(".tags--parents [fs-cmsfilter-field='tag']")
         ).map((parent) => parent.textContent.trim());
 
         console.log("Item Tags:", tags);
         console.log("Item Parents:", parents);
 
-        // Determine if the item matches the active filters
+        // Check if the item matches the active filters
         const matchesTagFilter =
           !activeTagFilter ||
           (tags.length > 0 && tags.includes(activeTagFilter));
