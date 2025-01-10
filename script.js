@@ -593,6 +593,7 @@ document.addEventListener("DOMContentLoaded", () => {
   console.log("DOM fully loaded and parsed.");
 
   const carousel4 = document.querySelectorAll(".is--testimonials-slider");
+  const swiperArrows = carousel4.parentElement.querySelector(".swiper-arrows");
 
   carousel4.forEach((swiperEl) => {
     console.log("Initializing Swiper for element:", swiperEl);
@@ -611,8 +612,8 @@ document.addEventListener("DOMContentLoaded", () => {
         },
       },
       navigation: {
-        nextEl: swiperEl.querySelector(".swiper-button-next"), // Scoped to each swiper instance
-        prevEl: swiperEl.querySelector(".swiper-button-prev"),
+        nextEl: swiperArrows.querySelector(".swiper-button-next"), // Find the next button within the sibling
+        prevEl: swiperArrows.querySelector(".swiper-button-prev"), // Find the prev button within the sibling
       },
       scrollbar: {
         el: swiperEl.querySelector(".swiper-scrollbar"),
