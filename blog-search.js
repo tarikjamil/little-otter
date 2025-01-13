@@ -152,16 +152,14 @@ document.addEventListener("DOMContentLoaded", async function () {
     visibleItems.forEach((item, index) => {
       if (index >= start && index < end) {
         item.style.display = "block";
-        setTimeout(() => {
-          item.style.opacity = "1";
-          item.style.transform = "translateY(0)";
-        }, index * 50);
+        item.style.opacity = "1";
+        item.style.transform = "translateY(0)";
       } else {
         item.style.opacity = "0";
         item.style.transform = "translateY(20rem)";
         setTimeout(() => {
           item.style.display = "none";
-        }, 300);
+        }, 300); // Match the animation duration
       }
     });
 
