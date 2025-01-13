@@ -162,7 +162,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       if (index >= start && index < end) {
         item.style.display = "block"; // Ensure items are displayed
         item.style.opacity = "1"; // Make sure items are visible
-        item.style.transform = "none"; // Disable animation for debugging
+        item.style.transform = "translateY(0rem)"; // Disable animation for debugging
         console.log(`Forcing item at index ${index} to display.`);
       } else {
         console.log(`Hiding item at index ${index}`);
