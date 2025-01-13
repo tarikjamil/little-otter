@@ -160,10 +160,10 @@ document.addEventListener("DOMContentLoaded", async function () {
     // Loop through all visible items and display only those within the range for the current page
     visibleItems.forEach((item, index) => {
       if (index >= start && index < end) {
-        console.log(`Displaying item at index ${index}`);
         item.style.display = "block"; // Ensure items are displayed
         item.style.opacity = "1"; // Make sure items are visible
-        item.style.transform = "translateY(0)"; // Reset transform
+        item.style.transform = "none"; // Disable animation for debugging
+        console.log(`Forcing item at index ${index} to display.`);
       } else {
         console.log(`Hiding item at index ${index}`);
         item.style.display = "none"; // Ensure other items are hidden
