@@ -15,6 +15,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   );
 
   let cmsItems = [];
+  let visibleItems = []; // Store filtered items
   let activeCategoryFilter = null;
   let activeTagFilter = null;
   let sortType = null; // Store the current sort type
@@ -74,7 +75,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         cmsItems.push(...items);
         items.forEach((item) => cmsContainer.appendChild(item));
       }
-      await Promise.all(cmsItems.map(fetchAdditionalData));
+      await Promise.all(cmsItems.map(fetchAdditionalData)); // Fetch additional data for all items
       loadingIndicator.style.display = "none";
       applyFilters(); // Apply filters after loading
       applySorting(sortType); // Apply sorting if already selected
@@ -86,7 +87,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   // Apply filters to items
   function applyFilters() {
-    cmsItems.forEach((item) => {
+    visibleItems = cmsItems.filter((item) => {
       const categories = Array.from(
         item.querySelectorAll(".categories-parents .tag--item.is--regular")
       ).map((el) => el.textContent.trim());
@@ -100,18 +101,17 @@ document.addEventListener("DOMContentLoaded", async function () {
       const matchesTagFilter =
         !activeTagFilter || tags.includes(activeTagFilter);
 
-      item.style.display =
-        matchesCategoryFilter && matchesTagFilter ? "block" : "none";
+      return matchesCategoryFilter && matchesTagFilter;
     });
+
+    console.log(`Filtered items count: ${visibleItems.length}`);
+    currentPage = 1; // Reset to the first page after filtering
+    renderPage(); // Render the filtered items
   }
 
   // Apply sorting to items
   function applySorting(sortType) {
     if (!sortType) return;
-    const container = cmsContainer;
-    const visibleItems = cmsItems.filter(
-      (item) => item.style.display !== "none"
-    );
 
     visibleItems.sort((a, b) => {
       if (sortType === "A-Z" || sortType === "Z-A") {
@@ -137,13 +137,12 @@ document.addEventListener("DOMContentLoaded", async function () {
       }
     });
 
-    // Reorder items in the DOM
-    visibleItems.forEach((item) => container.appendChild(item));
+    console.log(`Sorted items by: ${sortType}`);
+    renderPage(); // Render after sorting
   }
 
   // Render the current page based on pagination
   function renderPage() {
-    // Calculate the start and end indexes for the current page
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
 
@@ -151,21 +150,19 @@ document.addEventListener("DOMContentLoaded", async function () {
       `Rendering items for page ${currentPage}: indexes ${start} to ${end}`
     );
 
-    cmsItems.forEach((item, index) => {
+    cmsItems.forEach((item) => {
+      item.style.display = "none"; // Hide all items initially
+    });
+
+    visibleItems.forEach((item, index) => {
       if (index >= start && index < end) {
-        console.log(`Displaying item at index ${index}`);
-        item.style.display = "block"; // Ensure the item is displayed
-        item.style.opacity = "1"; // Make the item visible
+        item.style.display = "block"; // Display items for the current page
+        item.style.opacity = "1"; // Make sure items are visible
         item.style.transform = "translateY(0)"; // Reset transform
-      } else {
-        console.log(`Hiding item at index ${index}`);
-        item.style.display = "none"; // Ensure the item is hidden
-        item.style.opacity = "0"; // Visually hide the item
-        item.style.transform = "translateY(20rem)"; // Add animation (if needed)
       }
     });
 
-    renderPaginationControls(cmsItems.length);
+    renderPaginationControls(visibleItems.length);
   }
 
   // Render pagination controls
@@ -203,9 +200,6 @@ document.addEventListener("DOMContentLoaded", async function () {
       activeCategoryFilter =
         activeCategoryFilter === filterValue ? null : filterValue;
       applyFilters();
-      applySorting(sortType); // Ensure sorting is reapplied
-      currentPage = 1; // Reset to the first page
-      renderPage();
     });
   });
 
@@ -215,9 +209,6 @@ document.addEventListener("DOMContentLoaded", async function () {
       const filterValue = filter.textContent.trim();
       activeTagFilter = activeTagFilter === filterValue ? null : filterValue;
       applyFilters();
-      applySorting(sortType); // Ensure sorting is reapplied
-      currentPage = 1; // Reset to the first page
-      renderPage();
     });
   });
 
@@ -226,8 +217,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     filter.addEventListener("click", () => {
       sortType = filter.textContent.trim();
       applySorting(sortType);
-      currentPage = 1; // Reset to the first page
-      renderPage();
     });
   });
 
