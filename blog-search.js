@@ -88,7 +88,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         loadingIndicator.textContent = "No items found.";
       }
 
-      initializeFiltersAndSorting();
       renderPage();
     } catch (error) {
       console.error("Error loading all pages:", error);
@@ -149,66 +148,6 @@ document.addEventListener("DOMContentLoaded", async function () {
       });
       paginationContainer.appendChild(nextButton);
     }
-  }
-
-  // Initialize filters and sorting
-  function initializeFiltersAndSorting() {
-    console.log("Initializing filters and sorting...");
-    const filterByTagRadios = document.querySelectorAll(
-      ".filters--accordion:nth-child(1) .filter--radio"
-    );
-    const filterByParentRadios = document.querySelectorAll(
-      ".filters--accordion:nth-child(2) .filter--radio"
-    );
-
-    let activeTagFilter = null;
-    let activeParentFilter = null;
-
-    function applyFiltersAndSort() {
-      console.log("Applying filters and sorting...");
-
-      cmsItems.forEach((item) => {
-        const tags = Array.from(
-          item.querySelectorAll(".categories-parents .tag--item")
-        ).map((tag) => tag.textContent.trim());
-
-        const parents = Array.from(
-          item.querySelectorAll(".tags--parents [fs-cmsfilter-field='tag']")
-        ).map((parent) => parent.textContent.trim());
-
-        const matchesTagFilter =
-          !activeTagFilter ||
-          (tags.length > 0 && tags.includes(activeTagFilter));
-        const matchesParentFilter =
-          !activeParentFilter ||
-          (parents.length > 0 &&
-            parents.some((parent) => parent.includes(activeParentFilter)));
-
-        if (matchesTagFilter && matchesParentFilter) {
-          item.style.display = "block";
-        } else {
-          item.style.display = "none";
-        }
-      });
-    }
-
-    filterByTagRadios.forEach((radio) => {
-      radio.addEventListener("click", () => {
-        const label = radio.querySelector(".w-form-label").textContent.trim();
-        activeTagFilter = label === activeTagFilter ? null : label;
-        applyFiltersAndSort();
-      });
-    });
-
-    filterByParentRadios.forEach((radio) => {
-      radio.addEventListener("click", () => {
-        const label = radio.querySelector(".w-form-label").textContent.trim();
-        activeParentFilter = label === activeParentFilter ? null : label;
-        applyFiltersAndSort();
-      });
-    });
-
-    applyFiltersAndSort();
   }
 
   await loadAllPages();
