@@ -4,7 +4,19 @@ document.addEventListener("DOMContentLoaded", async function () {
   const cmsContainer = document.getElementById("cms-container");
   const paginationContainer = document.getElementById("pagination");
   const loadingIndicator = document.getElementById("loading-indicator");
-  let cmsItems = []; // Store all loaded items
+  const categoryFilters = document.querySelectorAll(
+    ".filters--accordion:nth-child(1) .filter--radio"
+  );
+  const tagFilters = document.querySelectorAll(
+    ".filters--accordion:nth-child(2) .filter--radio"
+  );
+  const sortFilters = document.querySelectorAll(
+    ".filters--accordion:nth-child(3) .filter--radio"
+  );
+
+  let cmsItems = [];
+  let activeCategoryFilter = null;
+  let activeTagFilter = null;
   let currentPage = 1;
 
   if (!cmsContainer || !loadingIndicator) {
@@ -22,9 +34,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       const pageContent = await response.text();
       const parser = new DOMParser();
       const doc = parser.parseFromString(pageContent, "text/html");
-      const items = Array.from(doc.querySelectorAll(".cms-item"));
-
-      return items;
+      return Array.from(doc.querySelectorAll(".cms-item"));
     } catch (error) {
       console.error(`Error fetching page ${pageNumber}:`, error);
       return [];
@@ -43,14 +53,11 @@ document.addEventListener("DOMContentLoaded", async function () {
       const parser = new DOMParser();
       const doc = parser.parseFromString(pageContent, "text/html");
       const categories = doc.querySelector(".article--categories-list");
-
       if (categories) {
         const categoriesParent = cmsItem.querySelector(".categories-parents");
         if (categoriesParent) {
           categoriesParent.innerHTML = categories.innerHTML;
         }
-      } else {
-        console.warn(`No .article--categories-list found on ${link}`);
       }
     } catch (error) {
       console.error(`Error fetching additional data for ${link}:`, error);
@@ -61,7 +68,6 @@ document.addEventListener("DOMContentLoaded", async function () {
   async function loadAllPages() {
     try {
       loadingIndicator.style.display = "block";
-
       for (let i = 1; i <= totalPages; i++) {
         const items = await fetchPageContent(i);
         if (items.length === 0) {
@@ -70,21 +76,74 @@ document.addEventListener("DOMContentLoaded", async function () {
         cmsItems.push(...items);
         items.forEach((item) => cmsContainer.appendChild(item));
       }
-
-      // Fetch additional data for each item
       await Promise.all(cmsItems.map(fetchAdditionalData));
-
       loadingIndicator.style.display = "none";
-
       if (cmsItems.length === 0) {
         loadingIndicator.textContent = "No items found.";
       }
-
-      renderPage();
+      applyFilters(); // Apply filters to ensure only relevant items are shown initially
+      renderPage(); // Render the first page
     } catch (error) {
       console.error("Error loading all pages:", error);
       loadingIndicator.textContent = "Failed to load content.";
     }
+  }
+
+  // Filter items based on active filters
+  function applyFilters() {
+    cmsItems.forEach((item) => {
+      const categories = Array.from(
+        item.querySelectorAll(".categories-parents .tag--item.is--regular")
+      ).map((el) => el.textContent.trim());
+
+      const tags = Array.from(
+        item.querySelectorAll("[fs-cmsfilter-field='tag']")
+      ).map((el) => el.textContent.trim());
+
+      const matchesCategoryFilter =
+        !activeCategoryFilter || categories.includes(activeCategoryFilter);
+      const matchesTagFilter =
+        !activeTagFilter || tags.includes(activeTagFilter);
+
+      item.style.display =
+        matchesCategoryFilter && matchesTagFilter ? "block" : "none";
+    });
+  }
+
+  // Sort items
+  function applySorting(sortType) {
+    const container = cmsItems[0]?.parentElement;
+    const sortedItems = [...cmsItems];
+
+    if (sortType === "A-Z" || sortType === "Z-A") {
+      sortedItems.sort((a, b) => {
+        const nameA = a
+          .querySelector("[fs-cmssort-field='name']")
+          ?.textContent.trim()
+          .toLowerCase();
+        const nameB = b
+          .querySelector("[fs-cmssort-field='name']")
+          ?.textContent.trim()
+          .toLowerCase();
+
+        return sortType === "A-Z"
+          ? nameA.localeCompare(nameB)
+          : nameB.localeCompare(nameA);
+      });
+    } else if (sortType === "Newest" || sortType === "Oldest") {
+      sortedItems.sort((a, b) => {
+        const dateA = new Date(
+          a.querySelector("[fs-cmssort-field='date']")?.textContent.trim()
+        );
+        const dateB = new Date(
+          b.querySelector("[fs-cmssort-field='date']")?.textContent.trim()
+        );
+
+        return sortType === "Newest" ? dateB - dateA : dateA - dateB;
+      });
+    }
+
+    sortedItems.forEach((item) => container.appendChild(item));
   }
 
   // Render current page of items
@@ -113,7 +172,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   // Render pagination controls
   function renderPaginationControls() {
-    const totalItems = cmsItems.length;
+    const totalItems = cmsItems.filter(
+      (item) => item.style.display !== "none"
+    ).length;
     const totalPages = Math.ceil(totalItems / itemsPerPage);
     paginationContainer.innerHTML = "";
 
@@ -140,82 +201,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
   }
 
-  await loadAllPages();
-});
-
-document.addEventListener("DOMContentLoaded", function () {
-  const cmsItems = Array.from(document.querySelectorAll(".cms-item"));
-  const categoryFilters = document.querySelectorAll(
-    ".filters--accordion:nth-child(1) .filter--radio"
-  );
-  const tagFilters = document.querySelectorAll(
-    ".filters--accordion:nth-child(2) .filter--radio"
-  );
-  const sortFilters = document.querySelectorAll(
-    ".filters--accordion:nth-child(3) .filter--radio"
-  );
-
-  let activeCategoryFilter = null;
-  let activeTagFilter = null;
-
-  // Filter items based on active filters
-  function applyFilters() {
-    cmsItems.forEach((item) => {
-      const tagItems = Array.from(
-        item.querySelectorAll(".tag--item.is--regular")
-      ).map((tag) => tag.textContent.trim());
-      const tagField = item
-        .querySelector("[fs-cmsfilter-field='tag']")
-        ?.textContent.trim();
-
-      const matchesCategoryFilter =
-        !activeCategoryFilter || tagItems.includes(activeCategoryFilter);
-      const matchesTagFilter = !activeTagFilter || tagField === activeTagFilter;
-
-      item.style.display =
-        matchesCategoryFilter && matchesTagFilter ? "block" : "none";
-    });
-  }
-
-  // Sort items
-  function applySorting(sortType) {
-    const container = cmsItems[0]?.parentElement;
-    const sortedItems = [...cmsItems];
-
-    if (sortType === "A-Z" || sortType === "Z-A") {
-      sortedItems.sort((a, b) => {
-        const nameA = a
-          .querySelector("[fs-cmssort-field='name']")
-          ?.textContent.trim()
-          .toLowerCase();
-        const nameB = b
-          .querySelector("[fs-cmssort-field='name']")
-          ?.textContent.trim()
-          .toLowerCase();
-
-        if (sortType === "A-Z") return nameA > nameB ? 1 : -1;
-        if (sortType === "Z-A") return nameA < nameB ? 1 : -1;
-        return 0;
-      });
-    } else if (sortType === "Newest" || sortType === "Oldest") {
-      sortedItems.sort((a, b) => {
-        const dateA = new Date(
-          a.querySelector("[fs-cmssort-field='date']")?.textContent.trim()
-        );
-        const dateB = new Date(
-          b.querySelector("[fs-cmssort-field='date']")?.textContent.trim()
-        );
-
-        if (sortType === "Newest") return dateB - dateA;
-        if (sortType === "Oldest") return dateA - dateB;
-        return 0;
-      });
-    }
-
-    // Reorder the items in the container
-    sortedItems.forEach((item) => container.appendChild(item));
-  }
-
   // Attach click events to category filters
   categoryFilters.forEach((filter) => {
     filter.addEventListener("click", () => {
@@ -223,6 +208,7 @@ document.addEventListener("DOMContentLoaded", function () {
       activeCategoryFilter =
         activeCategoryFilter === filterValue ? null : filterValue;
       applyFilters();
+      renderPage();
     });
   });
 
@@ -232,6 +218,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const filterValue = filter.textContent.trim();
       activeTagFilter = activeTagFilter === filterValue ? null : filterValue;
       applyFilters();
+      renderPage();
     });
   });
 
@@ -240,6 +227,9 @@ document.addEventListener("DOMContentLoaded", function () {
     filter.addEventListener("click", () => {
       const sortType = filter.textContent.trim();
       applySorting(sortType);
+      renderPage();
     });
   });
+
+  await loadAllPages();
 });
