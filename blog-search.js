@@ -143,12 +143,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   // Render the current page based on pagination
   function renderPage() {
-    // Filter the items to only those currently visible
     const visibleItems = cmsItems.filter(
       (item) => item.style.display !== "none"
     );
-
-    // Calculate the start and end indexes for the current page
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
 
@@ -156,23 +153,18 @@ document.addEventListener("DOMContentLoaded", async function () {
       `Rendering items for page ${currentPage}: indexes ${start} to ${end}`
     );
 
-    // Loop through all visible items and display only those within the range for the current page
     visibleItems.forEach((item, index) => {
       if (index >= start && index < end) {
-        item.style.display = "block"; // Make the item visible
-        item.style.opacity = "1"; // Ensure opacity is fully visible
-        item.style.transform = "translateY(0)"; // Reset the transform to its default
+        item.style.display = "block"; // Ensure items are displayed
+        item.style.opacity = "1"; // Ensure full visibility
+        item.style.transform = "translateY(0)"; // Reset transform
       } else {
-        // Hide items that are not on the current page
-        item.style.opacity = "0";
-        item.style.transform = "translateY(20rem)";
-        setTimeout(() => {
-          item.style.display = "none"; // Ensure the item is fully hidden after animation
-        }, 300); // Match this timeout to your CSS transition duration
+        item.style.display = "none"; // Hide other items
+        item.style.opacity = "0"; // Ensure items are hidden
+        item.style.transform = "translateY(20rem)"; // Apply transform
       }
     });
 
-    // Update pagination controls based on the total visible items
     renderPaginationControls(visibleItems.length);
   }
 
