@@ -12,12 +12,9 @@ document.addEventListener("DOMContentLoaded", async function () {
     return;
   }
 
-  console.log("Starting script...");
-
   // Fetch items from a single page
   async function fetchPageContent(pageNumber) {
     try {
-      console.log(`Fetching page: /blog-items/page-${pageNumber}`);
       const response = await fetch(`/blog-items/page-${pageNumber}`);
       if (!response.ok) {
         throw new Error(`Failed to fetch page: ${response.status}`);
@@ -26,7 +23,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       const parser = new DOMParser();
       const doc = parser.parseFromString(pageContent, "text/html");
       const items = Array.from(doc.querySelectorAll(".cms-item"));
-      console.log(`Fetched ${items.length} items from page ${pageNumber}`);
+
       return items;
     } catch (error) {
       console.error(`Error fetching page ${pageNumber}:`, error);
@@ -38,7 +35,6 @@ document.addEventListener("DOMContentLoaded", async function () {
   async function fetchAdditionalData(cmsItem) {
     const link = cmsItem.querySelector("a").href;
     try {
-      console.log(`Fetching additional data from: ${link}`);
       const response = await fetch(link);
       if (!response.ok) {
         throw new Error(`Failed to fetch ${link}: ${response.status}`);
@@ -52,7 +48,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         const categoriesParent = cmsItem.querySelector(".categories-parents");
         if (categoriesParent) {
           categoriesParent.innerHTML = categories.innerHTML;
-          console.log(`Appended categories to .categories-parents for ${link}`);
         }
       } else {
         console.warn(`No .article--categories-list found on ${link}`);
@@ -65,7 +60,6 @@ document.addEventListener("DOMContentLoaded", async function () {
   // Load all pages and initialize
   async function loadAllPages() {
     try {
-      console.log("Loading all pages...");
       loadingIndicator.style.display = "block";
 
       for (let i = 1; i <= totalPages; i++) {
@@ -76,8 +70,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         cmsItems.push(...items);
         items.forEach((item) => cmsContainer.appendChild(item));
       }
-
-      console.log(`Total items loaded: ${cmsItems.length}`);
 
       // Fetch additional data for each item
       await Promise.all(cmsItems.map(fetchAdditionalData));
@@ -97,7 +89,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   // Render current page of items
   function renderPage() {
-    console.log(`Rendering page ${currentPage}`);
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
 
@@ -122,7 +113,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   // Render pagination controls
   function renderPaginationControls() {
-    console.log("Rendering pagination controls...");
     const totalItems = cmsItems.length;
     const totalPages = Math.ceil(totalItems / itemsPerPage);
     paginationContainer.innerHTML = "";
