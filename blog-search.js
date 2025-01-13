@@ -143,9 +143,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   // Render the current page based on pagination
   function renderPage() {
-    const visibleItems = cmsItems.filter(
-      (item) => item.style.display !== "none"
-    );
+    // Filter the items to only those currently visible
+    const visibleItems = cmsItems.filter((item) => {
+      console.log(`Item display: ${item.style.display}`);
+      return item.style.display !== "none";
+    });
+
+    // Calculate the start and end indexes for the current page
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
 
@@ -153,18 +157,22 @@ document.addEventListener("DOMContentLoaded", async function () {
       `Rendering items for page ${currentPage}: indexes ${start} to ${end}`
     );
 
+    // Loop through all visible items and display only those within the range for the current page
     visibleItems.forEach((item, index) => {
       if (index >= start && index < end) {
+        console.log(`Displaying item at index ${index}`);
         item.style.display = "block"; // Ensure items are displayed
-        item.style.opacity = "1"; // Ensure full visibility
+        item.style.opacity = "1"; // Make sure items are visible
         item.style.transform = "translateY(0)"; // Reset transform
       } else {
-        item.style.display = "none"; // Hide other items
-        item.style.opacity = "0"; // Ensure items are hidden
-        item.style.transform = "translateY(20rem)"; // Apply transform
+        console.log(`Hiding item at index ${index}`);
+        item.style.display = "none"; // Ensure other items are hidden
+        item.style.opacity = "0"; // Hide items visually
+        item.style.transform = "translateY(20rem)"; // Apply transform for animation
       }
     });
 
+    // Update pagination controls based on the total visible items
     renderPaginationControls(visibleItems.length);
   }
 
