@@ -162,9 +162,13 @@ document.addEventListener("DOMContentLoaded", async function () {
       if (index >= start && index < end) {
         console.log(`Displaying item at index ${index}`);
         item.style.display = "block"; // Ensure items are displayed
+        item.style.opacity = "1"; // Make sure items are visible
+        item.style.transform = "translateY(0)"; // Reset transform
       } else {
         console.log(`Hiding item at index ${index}`);
         item.style.display = "none"; // Ensure other items are hidden
+        item.style.opacity = "0"; // Hide items visually
+        item.style.transform = "translateY(20rem)"; // Apply transform for animation
       }
     });
 
