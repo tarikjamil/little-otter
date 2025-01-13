@@ -143,12 +143,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   // Render the current page based on pagination
   function renderPage() {
-    // Filter the items to only those currently visible
-    const visibleItems = cmsItems.filter((item) => {
-      console.log(`Item display: ${item.style.display}`);
-      return item.style.display !== "none";
-    });
-
     // Calculate the start and end indexes for the current page
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
@@ -157,23 +151,21 @@ document.addEventListener("DOMContentLoaded", async function () {
       `Rendering items for page ${currentPage}: indexes ${start} to ${end}`
     );
 
-    // Loop through all visible items and display only those within the range for the current page
-    visibleItems.forEach((item, index) => {
+    cmsItems.forEach((item, index) => {
       if (index >= start && index < end) {
-        item.style.display = "block"; // Ensure items are displayed
-        item.style.opacity = "1"; // Make sure items are visible
-        item.style.transform = "translateY(0rem)"; // Disable animation for debugging
-        console.log(`Forcing item at index ${index} to display.`);
+        console.log(`Displaying item at index ${index}`);
+        item.style.display = "block"; // Ensure the item is displayed
+        item.style.opacity = "1"; // Make the item visible
+        item.style.transform = "translateY(0)"; // Reset transform
       } else {
         console.log(`Hiding item at index ${index}`);
-        item.style.display = "none"; // Ensure other items are hidden
-        item.style.opacity = "0"; // Hide items visually
-        item.style.transform = "translateY(20rem)"; // Apply transform for animation
+        item.style.display = "none"; // Ensure the item is hidden
+        item.style.opacity = "0"; // Visually hide the item
+        item.style.transform = "translateY(20rem)"; // Add animation (if needed)
       }
     });
 
-    // Update pagination controls based on the total visible items
-    renderPaginationControls(visibleItems.length);
+    renderPaginationControls(cmsItems.length);
   }
 
   // Render pagination controls
