@@ -74,7 +74,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         cmsItems.push(...items);
         items.forEach((item) => cmsContainer.appendChild(item));
       }
-      // Fetch additional data for all items
       await Promise.all(cmsItems.map(fetchAdditionalData));
       loadingIndicator.style.display = "none";
       applyFilters(); // Apply filters after loading
@@ -205,6 +204,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         activeCategoryFilter === filterValue ? null : filterValue;
       applyFilters();
       applySorting(sortType); // Ensure sorting is reapplied
+      currentPage = 1; // Reset to the first page
       renderPage();
     });
   });
@@ -216,6 +216,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       activeTagFilter = activeTagFilter === filterValue ? null : filterValue;
       applyFilters();
       applySorting(sortType); // Ensure sorting is reapplied
+      currentPage = 1; // Reset to the first page
       renderPage();
     });
   });
@@ -225,6 +226,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     filter.addEventListener("click", () => {
       sortType = filter.textContent.trim();
       applySorting(sortType);
+      currentPage = 1; // Reset to the first page
       renderPage();
     });
   });
