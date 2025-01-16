@@ -572,19 +572,19 @@ document.addEventListener("DOMContentLoaded", function () {
 // --------------------- related resources conditions --------------------- //
 
 document.addEventListener("DOMContentLoaded", () => {
-  // Select all related resource items
-  const relatedResourceItems = document.querySelectorAll(
-    ".related-resource--item"
-  );
-
-  // Loop through each item
-  relatedResourceItems.forEach((item) => {
-    // Check if it contains an element with the class w--current
-    if (item.querySelector(".w--current")) {
-      // Add display: none to the parent item
-      item.style.display = "none";
-    }
+  const observer = new MutationObserver(() => {
+    const relatedResourceItems = document.querySelectorAll(
+      ".related-resource--item"
+    );
+    relatedResourceItems.forEach((item) => {
+      if (item.querySelector(".w--current")) {
+        item.style.display = "none";
+      }
+    });
   });
+
+  // Start observing the body for changes
+  observer.observe(document.body, { childList: true, subtree: true });
 });
 
 // --------------------- swiper --------------------- //
