@@ -8,10 +8,10 @@ document.addEventListener("DOMContentLoaded", async function () {
     ".filters--accordion:nth-child(1) .filter--radio"
   );
   const tagFilters = document.querySelectorAll(
-    ".filters--accordion:nth-child(2) .filter--radio"
+    ".filters--accordion.is--tag .filter--radio"
   );
   const sortFilters = document.querySelectorAll(
-    ".filters--accordion:nth-child(3) .filter--radio"
+    ".filters--accordion.is--sort .filter--radio"
   );
 
   let cmsItems = [];
