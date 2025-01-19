@@ -2,12 +2,15 @@ $(document).ready(function () {
   // ------------------ accordion ------------------ //
 
   $(".filters--accordion-trigger").on("click", function (event) {
-    // Prevent closing the parent when clicking on inner dropdown
-    if ($(event.target).closest(".filters--accordion-list").length) {
-      return;
+    // Prevent parent dropdown from closing when clicking inside a nested dropdown
+    if (
+      $(event.target).closest(".filters--accordion-list").length &&
+      !$(event.target).hasClass("filters--accordion-trigger")
+    ) {
+      return; // Do nothing if clicking inside a nested dropdown
     }
 
-    // Close other accordions when opening new one
+    // Close other accordions when opening a new one
     if (!$(this).hasClass("open")) {
       $(".filters--accordion-trigger.open").not(this).click();
     }
