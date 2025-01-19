@@ -11,3 +11,10 @@
   height: 0;
   overflow: hidden;
 }
+
+@media screen and (min-width: 992px) {
+  .filters--accordion-list.is--filters {
+    height: auto !important;
+    overflow: hidden;
+  }
+}
