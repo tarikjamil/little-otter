@@ -122,69 +122,101 @@ $(".faq--question").on("click", function () {
 // --------------------- navbar dropdowns --------------------- //
 
 // GSAP Dropdown Logic
-document.addEventListener("DOMContentLoaded", () => {
-  const dropdowns = document.querySelectorAll(".navbar--dropdown");
+$(document).ready(function () {
+  const animationDuration = 500;
 
-  // Close specific dropdown
-  function closeDropdown(dropdownList) {
-    if (dropdownList.classList.contains("open")) {
-      gsap.to(dropdownList, {
-        height: 0,
-        opacity: 0,
-        duration: 0.5,
-        ease: "power2.out",
-        onComplete: () => {
-          dropdownList.style.display = "none"; // Hide completely after animation
-          dropdownList.classList.remove("open");
-        },
-      });
+  // Function to handle dropdown for screens above 992px
+  function desktopDropdown() {
+    $(".navbar--dropdown-toggle").off("mouseenter mouseleave click"); // Remove previous event handlers
 
-      const parentElements = dropdownList.querySelectorAll(
-        ".navbar--dropdown-title-parent, .navbar--dropdown-column"
-      );
-      gsap.to(parentElements, {
-        y: "20rem",
-        opacity: 0,
-        duration: 0.3,
-        stagger: 0.1,
+    // Hover functionality for larger screens
+    $(".navbar--dropdown-toggle").on("mouseenter", function () {
+      const dropdownLine = $(".navbar--dropdown-line"); // Line element
+      const state = Flip.getState(dropdownLine[0]);
+      $(this).append(dropdownLine);
+      Flip.from(state, {
+        duration: 0.4,
         ease: "power2.out",
       });
+    });
+
+    $(".navbar--menu").on("mouseleave", function () {
+      const dropdownLine = $(".navbar--dropdown-line");
+      const targetToggle = $(".navbar--dropdown-list")
+        .filter(function () {
+          return $(this).find(".w--current").length > 0;
+        })
+        .siblings(".navbar--dropdown-toggle")
+        .first();
+
+      if (targetToggle.length) {
+        const state = Flip.getState(dropdownLine[0]);
+        targetToggle.append(dropdownLine);
+        Flip.from(state, {
+          duration: 0.4,
+          ease: "power2.out",
+        });
+      } else {
+        dropdownLine.css("opacity", "0");
+      }
+    });
+  }
+
+  // Function to handle dropdown for screens below 992px
+  function mobileDropdown() {
+    $(".navbar--dropdown-toggle").off("mouseenter mouseleave click"); // Remove previous event handlers
+
+    $(".navbar--dropdown-toggle").on("click", function (e) {
+      e.stopPropagation(); // Prevent click from bubbling up
+
+      // Close other accordions when opening a new one
+      if (!$(this).hasClass("open")) {
+        $(".navbar--dropdown-toggle.open").click(); // Simulate a click to close others
+      }
+
+      const sibling = $(this).siblings(".navbar--dropdown-list");
+
+      if ($(this).hasClass("open")) {
+        // Close the content div if already open
+        sibling.animate({ height: "0px" }, animationDuration);
+      } else {
+        // Open the content div if already closed
+        sibling.css("height", "auto");
+        const autoHeight = sibling.height();
+        sibling.css("height", "0px");
+        sibling.animate({ height: autoHeight }, animationDuration, function () {
+          sibling.css("height", "auto"); // Reset to auto for responsiveness
+        });
+      }
+
+      // Toggle the open class
+      $(this).toggleClass("open");
+    });
+
+    // Close dropdowns when clicking outside
+    $(document).on("click", function (e) {
+      if (!$(e.target).closest(".navbar--dropdown").length) {
+        $(".navbar--dropdown-toggle.open").click();
+      }
+    });
+  }
+
+  // Function to initialize appropriate dropdown behavior based on screen size
+  function initDropdownBehavior() {
+    const screenWidth = $(window).width();
+    if (screenWidth > 992) {
+      desktopDropdown();
+    } else {
+      mobileDropdown();
     }
   }
 
-  // Open specific dropdown
-  function openDropdown(dropdownList) {
-    dropdownList.style.display = "flex"; // Ensure it's visible before animation
-    dropdownList.classList.add("open");
-    gsap.fromTo(
-      dropdownList,
-      { height: 0, opacity: 0 },
-      { height: "auto", opacity: 1, duration: 0.5, ease: "power2.out" }
-    );
+  // Initialize on page load
+  initDropdownBehavior();
 
-    const parentElements = dropdownList.querySelectorAll(
-      ".navbar--dropdown-title-parent, .navbar--dropdown-column"
-    );
-    gsap.fromTo(
-      parentElements,
-      { y: "20rem", opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.5, stagger: 0.1, ease: "power2.out" }
-    );
-  }
-
-  // Add hover events to dropdowns
-  dropdowns.forEach((dropdown) => {
-    const dropdownList = dropdown.querySelector(".navbar--dropdown-list");
-
-    dropdown.addEventListener("mouseenter", () => {
-      if (!dropdownList.classList.contains("open")) {
-        openDropdown(dropdownList);
-      }
-    });
-
-    dropdown.addEventListener("mouseleave", () => {
-      closeDropdown(dropdownList);
-    });
+  // Reinitialize on window resize
+  $(window).on("resize", function () {
+    initDropdownBehavior();
   });
 });
 
