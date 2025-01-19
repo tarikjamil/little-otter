@@ -96,7 +96,7 @@ document.addEventListener("DOMContentLoaded", function () {
     return new Date(dateStr);
   }
 
-  // Get related resources
+  // Get all related resources
   const resources1 = Array.from(
     document.querySelectorAll(".related--resources:nth-child(1) .w-dyn-item")
   );
@@ -106,12 +106,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const resources3 = Array.from(
     document.querySelectorAll(".related--resources:nth-child(3) .w-dyn-item")
   );
-
-  // Check if the first two resources are empty
-  const resourcesToUse =
-    resources1.length === 0 && resources2.length === 0
-      ? resources3
-      : [...resources1, ...resources2];
 
   // Create a unique map of articles by href (assuming href is unique)
   const uniqueArticles = new Map();
@@ -127,18 +121,27 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Add articles from the determined resources
-  addArticles(resourcesToUse);
-
-  // If fewer than 3 articles, add from the third resource
-  if (uniqueArticles.size < 3) {
-    addArticles(resources3);
-  }
+  // Add articles from the first two resources
+  addArticles(resources1);
+  addArticles(resources2);
 
   // Convert map to array and sort by date, newest to oldest
-  const sortedArticles = Array.from(uniqueArticles.values())
+  let sortedArticles = Array.from(uniqueArticles.values())
     .sort((a, b) => b.date - a.date)
     .map((item) => item.element);
+
+  // If fewer than 3 articles, add from the third resource
+  if (sortedArticles.length < 3) {
+    const uniqueSet = new Set(uniqueArticles.keys());
+    const additionalArticles = resources3.filter((article) => {
+      const href = article.querySelector("a").getAttribute("href");
+      return !uniqueSet.has(href);
+    });
+    addArticles(additionalArticles);
+    sortedArticles = Array.from(uniqueArticles.values())
+      .sort((a, b) => b.date - a.date)
+      .map((item) => item.element);
+  }
 
   // Update the grid with the first 3 articles
   const grid = document.querySelector(".grid--3els");
