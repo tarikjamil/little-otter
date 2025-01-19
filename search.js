@@ -58,6 +58,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     console.log("Search Query:", searchQuery);
 
+    // Update the #title content with the search query
+    const titleElement = document.getElementById("title");
+    if (titleElement) {
+      titleElement.textContent = searchQuery
+        ? `Search Results for "${searchQuery}"`
+        : "All Items"; // Default title if no query
+    }
+
     filteredItems = cmsItems.filter((item) => {
       const content = item.textContent.toLowerCase();
       return content.includes(searchQuery);
