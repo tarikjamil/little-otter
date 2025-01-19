@@ -53,4 +53,15 @@ $(document).ready(function () {
   $(".filters--accordion-list").on("click", function (event) {
     event.stopPropagation(); // Allow clicks inside the list without closing it
   });
+
+  // ------------------ close all dropdowns when clicking on a .filter--radio ------------------ //
+  $(".filter--radio").on("click", function () {
+    $(".filters--accordion-trigger.open").each(function () {
+      // Close all dropdowns
+      $(this).removeClass("open");
+      $(this)
+        .siblings(".filters--accordion-list")
+        .animate({ height: "0px" }, 500);
+    });
+  });
 });
