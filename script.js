@@ -122,101 +122,69 @@ $(".faq--question").on("click", function () {
 // --------------------- navbar dropdowns --------------------- //
 
 // GSAP Dropdown Logic
-$(document).ready(function () {
-  const animationDuration = 500;
+document.addEventListener("DOMContentLoaded", () => {
+  const dropdowns = document.querySelectorAll(".navbar--dropdown");
 
-  // Function to handle dropdown for screens above 992px
-  function desktopDropdown() {
-    $(".navbar--dropdown-toggle").off("mouseenter mouseleave click"); // Remove previous event handlers
+  // Close specific dropdown
+  function closeDropdown(dropdownList) {
+    if (dropdownList.classList.contains("open")) {
+      gsap.to(dropdownList, {
+        height: 0,
+        opacity: 0,
+        duration: 0.5,
+        ease: "power2.out",
+        onComplete: () => {
+          dropdownList.style.display = "none"; // Hide completely after animation
+          dropdownList.classList.remove("open");
+        },
+      });
 
-    // Hover functionality for larger screens
-    $(".navbar--dropdown-toggle").on("mouseenter", function () {
-      const dropdownLine = $(".navbar--dropdown-line"); // Line element
-      const state = Flip.getState(dropdownLine[0]);
-      $(this).append(dropdownLine);
-      Flip.from(state, {
-        duration: 0.4,
+      const parentElements = dropdownList.querySelectorAll(
+        ".navbar--dropdown-title-parent, .navbar--dropdown-column"
+      );
+      gsap.to(parentElements, {
+        y: "20rem",
+        opacity: 0,
+        duration: 0.3,
+        stagger: 0.1,
         ease: "power2.out",
       });
-    });
-
-    $(".navbar--menu").on("mouseleave", function () {
-      const dropdownLine = $(".navbar--dropdown-line");
-      const targetToggle = $(".navbar--dropdown-list")
-        .filter(function () {
-          return $(this).find(".w--current").length > 0;
-        })
-        .siblings(".navbar--dropdown-toggle")
-        .first();
-
-      if (targetToggle.length) {
-        const state = Flip.getState(dropdownLine[0]);
-        targetToggle.append(dropdownLine);
-        Flip.from(state, {
-          duration: 0.4,
-          ease: "power2.out",
-        });
-      } else {
-        dropdownLine.css("opacity", "0");
-      }
-    });
-  }
-
-  // Function to handle dropdown for screens below 992px
-  function mobileDropdown() {
-    $(".navbar--dropdown-toggle").off("mouseenter mouseleave click"); // Remove previous event handlers
-
-    $(".navbar--dropdown-toggle").on("click", function (e) {
-      e.stopPropagation(); // Prevent click from bubbling up
-
-      // Close other accordions when opening a new one
-      if (!$(this).hasClass("open")) {
-        $(".navbar--dropdown-toggle.open").click(); // Simulate a click to close others
-      }
-
-      const sibling = $(this).siblings(".navbar--dropdown-list");
-
-      if ($(this).hasClass("open")) {
-        // Close the content div if already open
-        sibling.animate({ height: "0px" }, animationDuration);
-      } else {
-        // Open the content div if already closed
-        sibling.css("height", "auto");
-        const autoHeight = sibling.height();
-        sibling.css("height", "0px");
-        sibling.animate({ height: autoHeight }, animationDuration, function () {
-          sibling.css("height", "auto"); // Reset to auto for responsiveness
-        });
-      }
-
-      // Toggle the open class
-      $(this).toggleClass("open");
-    });
-
-    // Close dropdowns when clicking outside
-    $(document).on("click", function (e) {
-      if (!$(e.target).closest(".navbar--dropdown").length) {
-        $(".navbar--dropdown-toggle.open").click();
-      }
-    });
-  }
-
-  // Function to initialize appropriate dropdown behavior based on screen size
-  function initDropdownBehavior() {
-    const screenWidth = $(window).width();
-    if (screenWidth > 992) {
-      desktopDropdown();
-    } else {
-      mobileDropdown();
     }
   }
 
-  // Initialize on page load
-  initDropdownBehavior();
+  // Open specific dropdown
+  function openDropdown(dropdownList) {
+    dropdownList.style.display = "flex"; // Ensure it's visible before animation
+    dropdownList.classList.add("open");
+    gsap.fromTo(
+      dropdownList,
+      { height: 0, opacity: 0 },
+      { height: "auto", opacity: 1, duration: 0.5, ease: "power2.out" }
+    );
 
-  // Reinitialize on window resize
-  $(window).on("resize", function () {
-    initDropdownBehavior();
+    const parentElements = dropdownList.querySelectorAll(
+      ".navbar--dropdown-title-parent, .navbar--dropdown-column"
+    );
+    gsap.fromTo(
+      parentElements,
+      { y: "20rem", opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.5, stagger: 0.1, ease: "power2.out" }
+    );
+  }
+
+  // Add hover events to dropdowns
+  dropdowns.forEach((dropdown) => {
+    const dropdownList = dropdown.querySelector(".navbar--dropdown-list");
+
+    dropdown.addEventListener("mouseenter", () => {
+      if (!dropdownList.classList.contains("open")) {
+        openDropdown(dropdownList);
+      }
+    });
+
+    dropdown.addEventListener("mouseleave", () => {
+      closeDropdown(dropdownList);
+    });
   });
 });
 
@@ -336,15 +304,17 @@ $(document).ready(function () {
   // Create the .navbar--dropdown-line dynamically
   const dropdownLine = $('<div class="navbar--dropdown-line"></div>');
 
-  // Initialize dropdown state on page load
+  // Find the toggle whose sibling dropdown list contains a child with .w--current
   const initialTargetToggle = $(".navbar--dropdown-list")
     .filter(function () {
-      return $(this).find(".w--current").length > 0; // Check for .w--current
+      // Check if this .navbar--dropdown-list contains a child with .w--current
+      return $(this).find(".w--current").length > 0;
     })
     .siblings(".navbar--dropdown-toggle")
     .first();
 
   if (initialTargetToggle.length) {
+    // Append the line to the correct toggle and make it visible
     initialTargetToggle.append(dropdownLine);
     dropdownLine.css("opacity", "1");
     console.log("Appended .navbar--dropdown-line to:", initialTargetToggle[0]);
@@ -354,41 +324,40 @@ $(document).ready(function () {
     );
   }
 
-  // Click functionality for mobile
-  $(".navbar--dropdown-toggle").on("click", function (e) {
-    e.stopPropagation(); // Prevent click from bubbling up
-    const parentDropdown = $(this).closest(".navbar--dropdown"); // Get the parent dropdown
-    const isOpen = parentDropdown.hasClass("is-open");
+  // Hover functionality for toggles
+  $(".navbar--dropdown-toggle").on("mouseenter", function () {
+    dropdownLine.css("opacity", "1"); // Ensure the line is visible
+    const state = Flip.getState(dropdownLine[0]); // Capture the current position/state
+    $(this).append(dropdownLine); // Move the line to the hovered toggle
+    console.log("Moved .navbar--dropdown-line to hovered toggle:", this);
+    Flip.from(state, {
+      duration: 0.4,
+      ease: "power2.out",
+    });
+  });
 
-    // Close all other dropdowns
-    $(".navbar--dropdown").not(parentDropdown).removeClass("is-open");
+  // Mouse leave functionality for the entire navbar
+  $(".navbar--menu").on("mouseleave", function () {
+    const targetToggle = $(".navbar--dropdown-list")
+      .filter(function () {
+        // Check if this .navbar--dropdown-list contains a child with .w--current
+        return $(this).find(".w--current").length > 0;
+      })
+      .siblings(".navbar--dropdown-toggle")
+      .first();
 
-    if (!isOpen) {
-      // Open the clicked dropdown
-      parentDropdown.addClass("is-open");
-      dropdownLine.css("opacity", "1");
+    if (targetToggle.length) {
       const state = Flip.getState(dropdownLine[0]); // Capture the current position/state
-      $(this).append(dropdownLine); // Move the line to the clicked toggle
+      targetToggle.append(dropdownLine); // Move the line back to the correct toggle
+      console.log("Returned .navbar--dropdown-line to:", targetToggle[0]);
       Flip.from(state, {
         duration: 0.4,
         ease: "power2.out",
       });
     } else {
-      // Close the dropdown if already open
-      parentDropdown.removeClass("is-open");
-      dropdownLine.css("opacity", "0");
+      dropdownLine.css("opacity", "0"); // Hide the line if no valid target exists
+      console.warn("No .w--current found on mouse leave. Hiding line.");
     }
-  });
-
-  // Close dropdowns when clicking outside
-  $(document).on("click", function () {
-    $(".navbar--dropdown").removeClass("is-open");
-    dropdownLine.css("opacity", "0");
-  });
-
-  // Prevent click inside dropdown from closing it
-  $(".navbar--dropdown").on("click", function (e) {
-    e.stopPropagation();
   });
 });
 
