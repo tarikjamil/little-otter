@@ -594,11 +594,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Add click event to the button
   showMoreBtn.addEventListener("click", () => {
-    // Animate the height to auto
+    // Measure the full height of the content
+    const fullHeight = containerShowMore.scrollHeight + "rem";
+
+    // Animate the height to the full content height
     gsap.to(containerShowMore, {
-      height: "auto",
+      height: fullHeight,
       duration: 0.8,
       ease: "power2.out",
+      onComplete: () => {
+        // Clear the inline height style after animation to allow for responsive adjustments
+        containerShowMore.style.height = "auto";
+      },
     });
 
     // Fade out containerFlex and set display to none
