@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   const paginationContainer = document.getElementById("pagination");
   const loadingIndicator = document.getElementById("loading-indicator");
   const categoryFilters = document.querySelectorAll(
-    ".filters--accordion:nth-child(1) .filter--radio"
+    ".filters--accordion.is--filter .filter--radio"
   );
   const tagFilters = document.querySelectorAll(
     ".filters--accordion.is--tag .filter--radio"
