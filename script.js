@@ -304,7 +304,7 @@ $(document).ready(function () {
   // Create the .navbar--dropdown-line dynamically
   const dropdownLine = $('<div class="navbar--dropdown-line"></div>');
 
-  // Find the toggle whose sibling dropdown list contains a child with .w--current
+  // Initialize dropdown state on page load
   const initialTargetToggle = $(".navbar--dropdown-list")
     .filter(function () {
       return $(this).find(".w--current").length > 0; // Check for .w--current
@@ -322,64 +322,29 @@ $(document).ready(function () {
     );
   }
 
-  // Desktop hover functionality
-  $(".navbar--dropdown-toggle").on("mouseenter", function () {
-    if ($(window).width() > 768) {
-      dropdownLine.css("opacity", "1");
-      const state = Flip.getState(dropdownLine[0]);
-      $(this).append(dropdownLine);
-      console.log("Moved .navbar--dropdown-line to hovered toggle:", this);
-      Flip.from(state, {
-        duration: 0.4,
-        ease: "power2.out",
-      });
-    }
-  });
-
-  $(".navbar--menu").on("mouseleave", function () {
-    if ($(window).width() > 768) {
-      const targetToggle = $(".navbar--dropdown-list")
-        .filter(function () {
-          return $(this).find(".w--current").length > 0;
-        })
-        .siblings(".navbar--dropdown-toggle")
-        .first();
-
-      if (targetToggle.length) {
-        const state = Flip.getState(dropdownLine[0]);
-        targetToggle.append(dropdownLine);
-        console.log("Returned .navbar--dropdown-line to:", targetToggle[0]);
-        Flip.from(state, {
-          duration: 0.4,
-          ease: "power2.out",
-        });
-      } else {
-        dropdownLine.css("opacity", "0");
-        console.warn("No .w--current found on mouse leave. Hiding line.");
-      }
-    }
-  });
-
-  // Mobile click functionality
+  // Click functionality for mobile
   $(".navbar--dropdown-toggle").on("click", function (e) {
-    e.stopPropagation(); // Prevent event bubbling
-    const parent = $(this).parent(".navbar--dropdown");
-    const isOpen = parent.hasClass("is-open");
+    e.stopPropagation(); // Prevent click from bubbling up
+    const parentDropdown = $(this).closest(".navbar--dropdown"); // Get the parent dropdown
+    const isOpen = parentDropdown.hasClass("is-open");
 
-    // Close any open dropdowns
-    $(".navbar--dropdown").removeClass("is-open");
+    // Close all other dropdowns
+    $(".navbar--dropdown").not(parentDropdown).removeClass("is-open");
 
     if (!isOpen) {
-      parent.addClass("is-open"); // Open the clicked dropdown
+      // Open the clicked dropdown
+      parentDropdown.addClass("is-open");
       dropdownLine.css("opacity", "1");
-      const state = Flip.getState(dropdownLine[0]);
-      $(this).append(dropdownLine);
+      const state = Flip.getState(dropdownLine[0]); // Capture the current position/state
+      $(this).append(dropdownLine); // Move the line to the clicked toggle
       Flip.from(state, {
         duration: 0.4,
         ease: "power2.out",
       });
     } else {
-      parent.removeClass("is-open"); // Close the dropdown if clicked again
+      // Close the dropdown if already open
+      parentDropdown.removeClass("is-open");
+      dropdownLine.css("opacity", "0");
     }
   });
 
@@ -387,6 +352,11 @@ $(document).ready(function () {
   $(document).on("click", function () {
     $(".navbar--dropdown").removeClass("is-open");
     dropdownLine.css("opacity", "0");
+  });
+
+  // Prevent click inside dropdown from closing it
+  $(".navbar--dropdown").on("click", function (e) {
+    e.stopPropagation();
   });
 });
 
