@@ -44,7 +44,7 @@ $(document).ready(function () {
         $(this).removeClass("open");
         $(this)
           .siblings(".filters--accordion-list")
-          .animate({ height: "0px" }, 500);
+          .animate({ height: "0px" }, 300);
       });
     }
   });
@@ -61,7 +61,7 @@ $(document).ready(function () {
       $(this).removeClass("open");
       $(this)
         .siblings(".filters--accordion-list")
-        .animate({ height: "0px" }, 500);
+        .animate({ height: "0px" }, 300);
     });
   });
 });
