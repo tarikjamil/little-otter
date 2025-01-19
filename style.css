@@ -220,4 +220,7 @@ fieldset {
   }
 }
 
-/* ------------ hubspot form newsletter ------------ */
+/* ------------ search filters ------------ */
+.filter--radio.is--active {
+  opacity: 1;
+}
