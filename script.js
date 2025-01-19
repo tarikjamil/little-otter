@@ -134,7 +134,7 @@ document.addEventListener("DOMContentLoaded", () => {
         duration: 0.5,
         ease: "power2.out",
         onComplete: () => {
-          dropdownList.style.display = "none"; // Hide completely after animation
+          dropdownList.style.display = "none";
           dropdownList.classList.remove("open");
         },
       });
@@ -154,7 +154,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Open specific dropdown
   function openDropdown(dropdownList) {
-    dropdownList.style.display = "flex"; // Ensure it's visible before animation
+    dropdownList.style.display = "flex";
     dropdownList.classList.add("open");
     gsap.fromTo(
       dropdownList,
@@ -172,19 +172,70 @@ document.addEventListener("DOMContentLoaded", () => {
     );
   }
 
-  // Add hover events to dropdowns
-  dropdowns.forEach((dropdown) => {
-    const dropdownList = dropdown.querySelector(".navbar--dropdown-list");
+  // Function to handle dropdowns for screens below 992px
+  function handleMobileDropdowns() {
+    $(".navbar--dropdown-toggle").on("click", function () {
+      const sibling = $(this).siblings(".navbar--dropdown-list");
+      const animationDuration = 500;
 
-    dropdown.addEventListener("mouseenter", () => {
-      if (!dropdownList.classList.contains("open")) {
-        openDropdown(dropdownList);
+      // Close other open dropdowns
+      if (!$(this).hasClass("open")) {
+        $(".navbar--dropdown-toggle.open").click();
       }
-    });
 
-    dropdown.addEventListener("mouseleave", () => {
-      closeDropdown(dropdownList);
+      if ($(this).hasClass("open")) {
+        sibling.animate({ height: "0px" }, animationDuration);
+      } else {
+        sibling.css("height", "auto");
+        const autoHeight = sibling.height();
+        sibling.css("height", "0px");
+        sibling.animate({ height: autoHeight }, animationDuration, () => {
+          sibling.css("height", "auto");
+        });
+      }
+
+      // Toggle the open class
+      $(this).toggleClass("open");
     });
+  }
+
+  // Add hover or click events based on screen size
+  function initDropdowns() {
+    if (window.innerWidth >= 992) {
+      dropdowns.forEach((dropdown) => {
+        const dropdownList = dropdown.querySelector(".navbar--dropdown-list");
+
+        dropdown.addEventListener("mouseenter", () => {
+          if (!dropdownList.classList.contains("open")) {
+            openDropdown(dropdownList);
+          }
+        });
+
+        dropdown.addEventListener("mouseleave", () => {
+          closeDropdown(dropdownList);
+        });
+      });
+
+      // Remove mobile-specific click events if resizing back to desktop
+      $(".navbar--dropdown-toggle").off("click");
+    } else {
+      // Remove hover events if resizing to mobile
+      dropdowns.forEach((dropdown) => {
+        dropdown.removeEventListener("mouseenter", openDropdown);
+        dropdown.removeEventListener("mouseleave", closeDropdown);
+      });
+
+      // Enable click-based accordion for mobile
+      handleMobileDropdowns();
+    }
+  }
+
+  // Initialize dropdowns on page load
+  initDropdowns();
+
+  // Reinitialize dropdowns on window resize
+  window.addEventListener("resize", () => {
+    initDropdowns();
   });
 });
 
