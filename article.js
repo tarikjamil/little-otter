@@ -87,3 +87,65 @@ document.addEventListener("DOMContentLoaded", () => {
     "Script completed successfully. Sections processed and summary list updated."
   );
 });
+
+// ------------------ related blog posts ------------------ //
+
+document.addEventListener("DOMContentLoaded", function () {
+  // Helper function to parse date strings into Date objects
+  function parseDate(dateStr) {
+    return new Date(dateStr);
+  }
+
+  // Get all related resources
+  const resources1 = Array.from(
+    document.querySelectorAll(".related--resources:nth-child(1) .w-dyn-item")
+  );
+  const resources2 = Array.from(
+    document.querySelectorAll(".related--resources:nth-child(2) .w-dyn-item")
+  );
+  const resources3 = Array.from(
+    document.querySelectorAll(".related--resources:nth-child(3) .w-dyn-item")
+  );
+
+  // Create a unique map of articles by href (assuming href is unique)
+  const uniqueArticles = new Map();
+
+  function addArticles(articles) {
+    articles.forEach((article) => {
+      const href = article.querySelector("a").getAttribute("href");
+      const dateEl = article.querySelector(".is--related-article-date");
+      const date = dateEl ? parseDate(dateEl.textContent.trim()) : new Date(0); // Default to old date if missing
+      if (!uniqueArticles.has(href)) {
+        uniqueArticles.set(href, { element: article, date });
+      }
+    });
+  }
+
+  // Add articles from the first two resources
+  addArticles(resources1);
+  addArticles(resources2);
+
+  // Convert map to array and sort by date, newest to oldest
+  const sortedArticles = Array.from(uniqueArticles.values())
+    .sort((a, b) => b.date - a.date)
+    .map((item) => item.element);
+
+  // Ensure at least 3 articles, adding from the third resource if necessary
+  if (sortedArticles.length < 3) {
+    addArticles(resources3);
+    const additionalArticles = Array.from(uniqueArticles.values())
+      .sort((a, b) => b.date - a.date)
+      .slice(sortedArticles.length, 3)
+      .map((item) => item.element);
+    sortedArticles.push(...additionalArticles);
+  }
+
+  // Update the grid with the first 3 articles
+  const grid = document.querySelector(".grid--3els");
+  if (grid) {
+    grid.innerHTML = ""; // Clear existing content
+    sortedArticles.slice(0, 3).forEach((article) => {
+      grid.appendChild(article.cloneNode(true)); // Clone to avoid removing from original
+    });
+  }
+});
