@@ -307,14 +307,12 @@ $(document).ready(function () {
   // Find the toggle whose sibling dropdown list contains a child with .w--current
   const initialTargetToggle = $(".navbar--dropdown-list")
     .filter(function () {
-      // Check if this .navbar--dropdown-list contains a child with .w--current
-      return $(this).find(".w--current").length > 0;
+      return $(this).find(".w--current").length > 0; // Check for .w--current
     })
     .siblings(".navbar--dropdown-toggle")
     .first();
 
   if (initialTargetToggle.length) {
-    // Append the line to the correct toggle and make it visible
     initialTargetToggle.append(dropdownLine);
     dropdownLine.css("opacity", "1");
     console.log("Appended .navbar--dropdown-line to:", initialTargetToggle[0]);
@@ -324,40 +322,71 @@ $(document).ready(function () {
     );
   }
 
-  // Hover functionality for toggles
+  // Desktop hover functionality
   $(".navbar--dropdown-toggle").on("mouseenter", function () {
-    dropdownLine.css("opacity", "1"); // Ensure the line is visible
-    const state = Flip.getState(dropdownLine[0]); // Capture the current position/state
-    $(this).append(dropdownLine); // Move the line to the hovered toggle
-    console.log("Moved .navbar--dropdown-line to hovered toggle:", this);
-    Flip.from(state, {
-      duration: 0.4,
-      ease: "power2.out",
-    });
+    if ($(window).width() > 768) {
+      dropdownLine.css("opacity", "1");
+      const state = Flip.getState(dropdownLine[0]);
+      $(this).append(dropdownLine);
+      console.log("Moved .navbar--dropdown-line to hovered toggle:", this);
+      Flip.from(state, {
+        duration: 0.4,
+        ease: "power2.out",
+      });
+    }
   });
 
-  // Mouse leave functionality for the entire navbar
   $(".navbar--menu").on("mouseleave", function () {
-    const targetToggle = $(".navbar--dropdown-list")
-      .filter(function () {
-        // Check if this .navbar--dropdown-list contains a child with .w--current
-        return $(this).find(".w--current").length > 0;
-      })
-      .siblings(".navbar--dropdown-toggle")
-      .first();
+    if ($(window).width() > 768) {
+      const targetToggle = $(".navbar--dropdown-list")
+        .filter(function () {
+          return $(this).find(".w--current").length > 0;
+        })
+        .siblings(".navbar--dropdown-toggle")
+        .first();
 
-    if (targetToggle.length) {
-      const state = Flip.getState(dropdownLine[0]); // Capture the current position/state
-      targetToggle.append(dropdownLine); // Move the line back to the correct toggle
-      console.log("Returned .navbar--dropdown-line to:", targetToggle[0]);
+      if (targetToggle.length) {
+        const state = Flip.getState(dropdownLine[0]);
+        targetToggle.append(dropdownLine);
+        console.log("Returned .navbar--dropdown-line to:", targetToggle[0]);
+        Flip.from(state, {
+          duration: 0.4,
+          ease: "power2.out",
+        });
+      } else {
+        dropdownLine.css("opacity", "0");
+        console.warn("No .w--current found on mouse leave. Hiding line.");
+      }
+    }
+  });
+
+  // Mobile click functionality
+  $(".navbar--dropdown-toggle").on("click", function (e) {
+    e.stopPropagation(); // Prevent event bubbling
+    const parent = $(this).parent(".navbar--dropdown");
+    const isOpen = parent.hasClass("is-open");
+
+    // Close any open dropdowns
+    $(".navbar--dropdown").removeClass("is-open");
+
+    if (!isOpen) {
+      parent.addClass("is-open"); // Open the clicked dropdown
+      dropdownLine.css("opacity", "1");
+      const state = Flip.getState(dropdownLine[0]);
+      $(this).append(dropdownLine);
       Flip.from(state, {
         duration: 0.4,
         ease: "power2.out",
       });
     } else {
-      dropdownLine.css("opacity", "0"); // Hide the line if no valid target exists
-      console.warn("No .w--current found on mouse leave. Hiding line.");
+      parent.removeClass("is-open"); // Close the dropdown if clicked again
     }
+  });
+
+  // Close dropdowns when clicking outside
+  $(document).on("click", function () {
+    $(".navbar--dropdown").removeClass("is-open");
+    dropdownLine.css("opacity", "0");
   });
 });
 
