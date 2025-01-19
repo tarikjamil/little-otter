@@ -219,12 +219,17 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
   }
 
-  // Attach event listeners to category filters
   categoryFilters.forEach((filter) => {
     filter.addEventListener("click", () => {
       const filterValue = filter.textContent.trim();
-      activeCategoryFilter =
-        activeCategoryFilter === filterValue ? null : filterValue;
+      if (activeCategoryFilter === filterValue) {
+        activeCategoryFilter = null;
+        filter.classList.remove("is--active"); // Remove active class if deselected
+      } else {
+        activeCategoryFilter = filterValue;
+        categoryFilters.forEach((f) => f.classList.remove("is--active")); // Remove active class from others
+        filter.classList.add("is--active"); // Add active class to the clicked filter
+      }
       applyFilters();
     });
   });
@@ -233,7 +238,14 @@ document.addEventListener("DOMContentLoaded", async function () {
   tagFilters.forEach((filter) => {
     filter.addEventListener("click", () => {
       const filterValue = filter.textContent.trim();
-      activeTagFilter = activeTagFilter === filterValue ? null : filterValue;
+      if (activeTagFilter === filterValue) {
+        activeTagFilter = null;
+        filter.classList.remove("is--active"); // Remove active class if deselected
+      } else {
+        activeTagFilter = filterValue;
+        tagFilters.forEach((f) => f.classList.remove("is--active")); // Remove active class from others
+        filter.classList.add("is--active"); // Add active class to the clicked filter
+      }
       applyFilters();
     });
   });
@@ -241,7 +253,15 @@ document.addEventListener("DOMContentLoaded", async function () {
   // Attach event listeners to sort filters
   sortFilters.forEach((filter) => {
     filter.addEventListener("click", () => {
-      sortType = filter.textContent.trim();
+      const sortValue = filter.textContent.trim();
+      if (sortType === sortValue) {
+        sortType = null;
+        filter.classList.remove("is--active"); // Remove active class if deselected
+      } else {
+        sortType = sortValue;
+        sortFilters.forEach((f) => f.classList.remove("is--active")); // Remove active class from others
+        filter.classList.add("is--active"); // Add active class to the clicked filter
+      }
       applySorting(sortType);
     });
   });
