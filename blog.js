@@ -2,16 +2,16 @@ $(document).ready(function () {
   // ------------------ accordion ------------------ //
 
   $(".filters--accordion-trigger").on("click", function (event) {
-    // Prevent parent dropdown from closing when clicking inside a nested dropdown
-    if (
-      $(event.target).closest(".filters--accordion-list").length &&
-      !$(event.target).hasClass("filters--accordion-trigger")
-    ) {
-      return; // Do nothing if clicking inside a nested dropdown
+    // Check if this is a click on a nested trigger
+    if ($(this).closest(".filters--accordion-list").length > 0) {
+      event.stopPropagation(); // Prevent the click from bubbling to the parent dropdown
     }
 
-    // Close other accordions when opening a new one
-    if (!$(this).hasClass("open")) {
+    // Close other accordions when opening a new one (only if not a nested accordion)
+    if (
+      !$(this).hasClass("open") &&
+      $(this).parents(".filters--accordion-list").length === 0
+    ) {
       $(".filters--accordion-trigger.open").not(this).click();
     }
 
@@ -47,5 +47,10 @@ $(document).ready(function () {
           .animate({ height: "0px" }, 500);
       });
     }
+  });
+
+  // Prevent dropdown closing when clicking inside nested lists
+  $(".filters--accordion-list").on("click", function (event) {
+    event.stopPropagation(); // Allow clicks inside the list without closing it
   });
 });
