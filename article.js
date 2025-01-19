@@ -98,13 +98,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Get all related resources
   const resources1 = Array.from(
-    document.querySelectorAll(".related--resources:nth-child(1) .w-dyn-item")
+    document.querySelectorAll(".related--resources.is--categories .w-dyn-item")
   );
   const resources2 = Array.from(
-    document.querySelectorAll(".related--resources:nth-child(2) .w-dyn-item")
+    document.querySelectorAll(".related--resources.is--tags .w-dyn-item")
   );
   const resources3 = Array.from(
-    document.querySelectorAll(".related--resources:nth-child(3) .w-dyn-item")
+    document.querySelectorAll(".related--resources.is--recent .w-dyn-item")
   );
 
   // Create a unique map of articles by href (assuming href is unique)
