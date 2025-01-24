@@ -221,6 +221,25 @@ fieldset {
   padding: 64rem 40rem;
 }
 
+.inputs-list {
+  padding-left: 0rem;
+}
+
+.hs-form-booleancheckbox::marker {
+  display: none;
+}
+
+.hs-form-booleancheckbox-display {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  column-gap: 8rem;
+}
+
+.hs-input[type="checkbox"] {
+  width: auto !important;
+}
+
 /* ------------ hubspot form mobile ------------ */
 
 @media screen and (max-width: 767px) {
