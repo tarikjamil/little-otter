@@ -211,6 +211,16 @@ fieldset {
   max-width: none !important;
 }
 
+.submitted-message {
+  color: var(--deep-marin--900);
+  font-size: 16rem;
+  line-height: 150%;
+  margin-top: 16rem;
+  background-color: white;
+  border-radius: 12rem;
+  padding: 64rem 40rem;
+}
+
 /* ------------ hubspot form mobile ------------ */
 
 @media screen and (max-width: 767px) {
