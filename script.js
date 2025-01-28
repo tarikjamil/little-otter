@@ -722,25 +722,44 @@ document.addEventListener("DOMContentLoaded", function () {
     let form = event.target.closest(".hs-form");
 
     if (form) {
-      event.preventDefault(); // Prevent default submission to allow changes
+      event.preventDefault(); // Prevent form submission to process the placeholders
 
+      // Extract form data
       let formData = new FormData(form);
       let formValues = {};
 
-      // Extract values from the form
+      // Map form data to an object
       formData.forEach((value, key) => {
         formValues[key] = value;
       });
 
-      // Replace placeholders in the page
-      document.body.innerHTML = document.body.innerHTML.replace(
-        /\{\{\s*contact\.([a-zA-Z0-9_]+)\s*\}\}/g,
-        function (match, field) {
-          return formValues[field] || match; // Replace if value exists, else keep placeholder
-        }
-      );
+      // Function to replace placeholders
+      function replacePlaceholders() {
+        // Get all elements that might contain placeholders
+        let elements = document.querySelectorAll(
+          "body *:not(script):not(style)"
+        );
 
-      // Optionally, submit the form after updating placeholders
+        elements.forEach((element) => {
+          if (
+            element.children.length === 0 &&
+            element.textContent.includes("{{")
+          ) {
+            // Replace placeholders within the text content
+            element.textContent = element.textContent.replace(
+              /\{\{\s*contact\.([a-zA-Z0-9_]+)\s*\}\}/g,
+              function (match, field) {
+                return formValues[field] || match; // Replace with form value or keep the placeholder
+              }
+            );
+          }
+        });
+      }
+
+      // Call the function to replace placeholders
+      replacePlaceholders();
+
+      // Submit the form after replacing placeholders
       form.submit();
     }
   });
