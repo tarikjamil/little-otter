@@ -228,6 +228,7 @@ fieldset {
 .hs-form-booleancheckbox::marker {
   display: none;
   opacity: 0;
+  content: "";
 }
 
 .hs-form-booleancheckbox-display {
