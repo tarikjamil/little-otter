@@ -718,22 +718,30 @@ document.querySelector(".announcement-close").addEventListener("click", () => {
 // --------------------- form change name --------------------- //
 
 document.addEventListener("DOMContentLoaded", function () {
-  // Wait for HubSpot forms to load
-  window.hbspt?.forms?.create({
-    portalId: "8179936",
-    formId: "47f06e77-2f32-4b56-b417-a228760defa2",
-    onFormSubmit: function ($form) {
-      // Get the first name value
-      const firstNameInput =
-        $form.find("input[name='firstname']").val() || "there";
+  document.addEventListener("submit", function (event) {
+    let form = event.target.closest(".hs-form");
 
-      // Replace the form content with a custom message
-      $form.html(`
-        <div class="thank-you-message">
-          <h2>Thank you, ${firstNameInput}!</h2>
-          <p>We appreciate your interest and will get back to you soon.</p>
-        </div>
-      `);
-    },
+    if (form) {
+      event.preventDefault(); // Prevent default submission to allow changes
+
+      let formData = new FormData(form);
+      let formValues = {};
+
+      // Extract values from the form
+      formData.forEach((value, key) => {
+        formValues[key] = value;
+      });
+
+      // Replace placeholders in the page
+      document.body.innerHTML = document.body.innerHTML.replace(
+        /\{\{\s*contact\.([a-zA-Z0-9_]+)\s*\}\}/g,
+        function (match, field) {
+          return formValues[field] || match; // Replace if value exists, else keep placeholder
+        }
+      );
+
+      // Optionally, submit the form after updating placeholders
+      form.submit();
+    }
   });
 });
