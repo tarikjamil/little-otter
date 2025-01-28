@@ -714,3 +714,26 @@ document.querySelector(".announcement-close").addEventListener("click", () => {
     },
   });
 });
+
+// --------------------- form change name --------------------- //
+
+document.addEventListener("DOMContentLoaded", function () {
+  // Wait for HubSpot forms to load
+  window.hbspt?.forms?.create({
+    portalId: "8179936",
+    formId: "47f06e77-2f32-4b56-b417-a228760defa2",
+    onFormSubmit: function ($form) {
+      // Get the first name value
+      const firstNameInput =
+        $form.find("input[name='firstname']").val() || "there";
+
+      // Replace the form content with a custom message
+      $form.html(`
+        <div class="thank-you-message">
+          <h2>Thank you, ${firstNameInput}!</h2>
+          <p>We appreciate your interest and will get back to you soon.</p>
+        </div>
+      `);
+    },
+  });
+});
