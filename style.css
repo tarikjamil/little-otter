@@ -227,6 +227,7 @@ fieldset {
 
 .hs-form-booleancheckbox::marker {
   display: none;
+  opacity: 0;
 }
 
 .hs-form-booleancheckbox-display {
@@ -238,6 +239,7 @@ fieldset {
 
 .hs-input[type="checkbox"] {
   width: auto !important;
+  margin: 0 !important;
 }
 
 /* ------------ hubspot form mobile ------------ */
