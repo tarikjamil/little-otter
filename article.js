@@ -14,6 +14,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let sections = [];
   let currentSection = null;
+  let introSection = {
+    id: "intro-section",
+    title: "Introduction",
+    elements: [],
+  };
+  let hasIntroContent = false; // Flag to check if intro section has content
 
   // Loop through all children to structure content
   children.forEach((child) => {
