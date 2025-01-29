@@ -14,6 +14,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let sections = [];
   let currentSection = null;
+  let introSection = {
+    id: "intro-section",
+    title: "Introduction",
+    elements: [],
+  };
+  let hasIntroContent = false; // Flag to check if intro section has content
 
   // Loop through all children to structure content
   children.forEach((child) => {
@@ -31,12 +37,21 @@ document.addEventListener("DOMContentLoaded", () => {
     } else if (currentSection) {
       // Add non-H2 elements to the current section
       currentSection.elements.push(child);
+    } else {
+      // This means we're before the first H2 → it's part of the introduction
+      introSection.elements.push(child);
+      hasIntroContent = true;
     }
   });
 
-  // Push the last section if exists
+  // Push the last section if it exists
   if (currentSection) {
     sections.push(currentSection);
+  }
+
+  // If there was content before the first H2, add the intro section
+  if (hasIntroContent) {
+    sections.unshift(introSection); // Add at the beginning
   }
 
   // If no sections found, do not edit the richtext or add summary links
@@ -70,16 +85,18 @@ document.addEventListener("DOMContentLoaded", () => {
     // Append the section div to the container
     richtextContainer.appendChild(sectionDiv);
 
-    // Create a new list item for the summary
-    const listItem = document.createElement("li");
-    const link = document.createElement("a");
-    link.href = `#${section.id}`;
-    link.textContent = section.title;
-    link.className = "article--link";
-    listItem.appendChild(link);
+    // Create a new list item for the summary (skip intro section in the summary)
+    if (section.id !== "intro-section") {
+      const listItem = document.createElement("li");
+      const link = document.createElement("a");
+      link.href = `#${section.id}`;
+      link.textContent = section.title;
+      link.className = "article--link";
+      listItem.appendChild(link);
 
-    // Append the list item to the summary
-    summaryList.appendChild(listItem);
+      // Append the list item to the summary
+      summaryList.appendChild(listItem);
+    }
   });
 
   // Debugging: Log the successful completion of the script
