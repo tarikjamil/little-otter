@@ -37,12 +37,21 @@ document.addEventListener("DOMContentLoaded", () => {
     } else if (currentSection) {
       // Add non-H2 elements to the current section
       currentSection.elements.push(child);
+    } else {
+      // This means we're before the first H2 → it's part of the introduction
+      introSection.elements.push(child);
+      hasIntroContent = true;
     }
   });
 
   // Push the last section if exists
   if (currentSection) {
     sections.push(currentSection);
+  }
+
+  // If there was content before the first H2, add the intro section
+  if (hasIntroContent) {
+    sections.unshift(introSection); // Add at the beginning
   }
 
   // If no sections found, do not edit the richtext or add summary links
