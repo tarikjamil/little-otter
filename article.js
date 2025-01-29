@@ -85,6 +85,11 @@ document.addEventListener("DOMContentLoaded", () => {
     // Append the section div to the container
     richtextContainer.appendChild(sectionDiv);
 
+    // **Skip "Introduction" section in the summary list**
+    if (section.id === "intro-section") {
+      return;
+    }
+
     // Create a new list item for the summary
     const listItem = document.createElement("li");
     const link = document.createElement("a");
