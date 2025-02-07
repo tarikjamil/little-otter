@@ -475,7 +475,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Set up autoplay loop
   const startAutoplay = () => {
     if (!isAutoplayActive) {
-      interval = setInterval(playNext, 3000); // 3 seconds per visual
+      interval = setInterval(playNext, 5000); // 3 seconds per visual
       isAutoplayActive = true;
     }
   };
