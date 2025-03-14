@@ -54,11 +54,22 @@ document.addEventListener("DOMContentLoaded", async function () {
       const pageContent = await response.text();
       const parser = new DOMParser();
       const doc = parser.parseFromString(pageContent, "text/html");
+
+      // Fetch categories
       const categories = doc.querySelector(".article--categories-list");
       if (categories) {
         const categoriesParent = cmsItem.querySelector(".categories-parents");
         if (categoriesParent) {
           categoriesParent.innerHTML = categories.innerHTML;
+        }
+      }
+
+      // Fetch authors
+      const authors = doc.querySelector(".authors--page-list");
+      if (authors) {
+        const authorsList = cmsItem.querySelector(".authors--list");
+        if (authorsList) {
+          authorsList.innerHTML = authors.innerHTML;
         }
       }
     } catch (error) {
