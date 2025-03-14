@@ -45,7 +45,14 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   // Fetch additional data for each CMS item
   async function fetchAdditionalData(cmsItem) {
-    const link = cmsItem.querySelector(".blog--item a").href; // Ensure it's fetching the correct link
+    const blogItemLinkElement = cmsItem.querySelector(".blog--item a");
+    if (!blogItemLinkElement) {
+      console.warn("No link found in .blog--item for", cmsItem);
+      return;
+    }
+    const link = blogItemLinkElement.href;
+    console.log(`Fetching additional data from: ${link}`); // Debugging log
+
     try {
       const response = await fetch(link);
       if (!response.ok) {
@@ -66,14 +73,19 @@ document.addEventListener("DOMContentLoaded", async function () {
 
       // Extract and update authors
       const authorsContainer = cmsItem.querySelector(".authors--list");
-      if (authorsContainer) {
-        const authors = doc.querySelectorAll(".author--item"); // Fetch all authors from the blog post
-        authorsContainer.innerHTML = ""; // Clear existing authors before adding new ones
-        authors.forEach((author) => {
-          const clonedAuthor = author.cloneNode(true); // Clone each author item
-          authorsContainer.appendChild(clonedAuthor); // Append to the authors list in cmsItem
-        });
+      if (!authorsContainer) {
+        console.warn("No .authors--list found in", cmsItem);
+        return;
       }
+
+      const authors = doc.querySelectorAll(".author--item"); // Fetch all authors from the blog post
+      console.log(`Found ${authors.length} authors for ${link}`);
+
+      authorsContainer.innerHTML = ""; // Clear existing authors before adding new ones
+      authors.forEach((author) => {
+        const clonedAuthor = author.cloneNode(true); // Clone each author item
+        authorsContainer.appendChild(clonedAuthor); // Append to the authors list in cmsItem
+      });
     } catch (error) {
       console.error(`Error fetching additional data for ${link}:`, error);
     }
