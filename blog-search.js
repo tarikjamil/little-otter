@@ -45,14 +45,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   // Fetch additional data for each CMS item
   async function fetchAdditionalData(cmsItem) {
-    const blogItemLinkElement = cmsItem.querySelector(".blog--item a");
-    if (!blogItemLinkElement) {
-      console.warn("No link found in .blog--item for", cmsItem);
-      return;
-    }
-    const link = blogItemLinkElement.href;
-    console.log(`Fetching additional data from: ${link}`); // Debugging log
-
+    const link = cmsItem.querySelector("a").href;
     try {
       const response = await fetch(link);
       if (!response.ok) {
@@ -61,8 +54,6 @@ document.addEventListener("DOMContentLoaded", async function () {
       const pageContent = await response.text();
       const parser = new DOMParser();
       const doc = parser.parseFromString(pageContent, "text/html");
-
-      // Extract and update categories
       const categories = doc.querySelector(".article--categories-list");
       if (categories) {
         const categoriesParent = cmsItem.querySelector(".categories-parents");
@@ -70,22 +61,6 @@ document.addEventListener("DOMContentLoaded", async function () {
           categoriesParent.innerHTML = categories.innerHTML;
         }
       }
-
-      // Extract and update authors
-      const authorsContainer = cmsItem.querySelector(".authors--list");
-      if (!authorsContainer) {
-        console.warn("No .authors--list found in", cmsItem);
-        return;
-      }
-
-      const authors = doc.querySelectorAll(".author--item"); // Fetch all authors from the blog post
-      console.log(`Found ${authors.length} authors for ${link}`);
-
-      authorsContainer.innerHTML = ""; // Clear existing authors before adding new ones
-      authors.forEach((author) => {
-        const clonedAuthor = author.cloneNode(true); // Clone each author item
-        authorsContainer.appendChild(clonedAuthor); // Append to the authors list in cmsItem
-      });
     } catch (error) {
       console.error(`Error fetching additional data for ${link}:`, error);
     }
