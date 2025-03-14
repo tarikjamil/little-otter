@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   // Fetch additional data for each CMS item
   async function fetchAdditionalData(cmsItem) {
-    const link = cmsItem.querySelector("a").href;
+    const link = cmsItem.querySelector(".blog--item a").href; // Ensure it's fetching the correct link
     try {
       const response = await fetch(link);
       if (!response.ok) {
@@ -54,12 +54,25 @@ document.addEventListener("DOMContentLoaded", async function () {
       const pageContent = await response.text();
       const parser = new DOMParser();
       const doc = parser.parseFromString(pageContent, "text/html");
+
+      // Extract and update categories
       const categories = doc.querySelector(".article--categories-list");
       if (categories) {
         const categoriesParent = cmsItem.querySelector(".categories-parents");
         if (categoriesParent) {
           categoriesParent.innerHTML = categories.innerHTML;
         }
+      }
+
+      // Extract and update authors
+      const authorsContainer = cmsItem.querySelector(".authors--list");
+      if (authorsContainer) {
+        const authors = doc.querySelectorAll(".author--item"); // Fetch all authors from the blog post
+        authorsContainer.innerHTML = ""; // Clear existing authors before adding new ones
+        authors.forEach((author) => {
+          const clonedAuthor = author.cloneNode(true); // Clone each author item
+          authorsContainer.appendChild(clonedAuthor); // Append to the authors list in cmsItem
+        });
       }
     } catch (error) {
       console.error(`Error fetching additional data for ${link}:`, error);
